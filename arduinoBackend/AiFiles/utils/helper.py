@@ -85,12 +85,13 @@ def verify(img, identity, model):
     ### START CODE HERE
     # Step 1: Compute the encoding for the image. Use img_to_encoding() see example above. (≈ 1 line)
     encoding = img_to_encoding(img,model)
-    print(os.pwd())
-    while(1):
-        a=0
+
+    # Example usage:
+    start_dir = '.'  # Start searching from the current directory
+    data = find_encoding_json(start_dir)
     # Step 2: Compute distance with identity's image (≈ 1 line)
-    with open("../encoding.json", "r") as f:
-        data = json.load(f)
+    # with open("encoding.json", "r") as f:
+    #     data = json.load(f)
     dist = np.linalg.norm(encoding-data[identity])
     # Step 3: Open the door if dist < 0.7, else don't open (≈ 3 lines)
     if dist<0.7:
@@ -101,3 +102,15 @@ def verify(img, identity, model):
         door_open = False
     ### END CODE HERE        
     return dist, door_open
+
+
+
+def find_encoding_json(start_dir):
+    for root, dirs, files in os.walk(start_dir):
+        if 'encoding.json' in files:
+            encoding_json_path = os.path.join(root, 'encoding.json')
+            with open(encoding_json_path, 'r') as f:
+                data = json.load(f)
+            return data
+    return None  # If encoding.json is not found in any directory
+

@@ -1,3 +1,6 @@
 'matrix'
 OpenCV(4.9.0) D:\a\opencv-python\opencv-python\opencv\modules\imgproc\src\resize.cpp:4030: error: (-215:Assertion failed) func != 0 in function 'cv::hal::resize'
 
+[Errno 2] No such file or directory: 'encoding.json'
+'Image' object has no attribute 'to_list'
+'numpy.ndarray' object has no attribute 'to_list'

@@ -6,14 +6,15 @@ import traceback
 import cv2
 from keras_facenet import FaceNet
 from AiFiles.utils.helper import img_to_encoding
-
+from AiFiles.utils.helper import verify
+from PIL import Image
 app = Flask(__name__)
 
 @app.route('/examplee', methods=['GET'])
 def example_routee(): 
     return "tomato"
 
-@app.route('/example', methods=['GET'])
+@app.route('/imageVerification', methods=['GET'])
 def example_route():  # sourcery skip: remove-unreachable-code
     try:
         if request.method == 'GET':
@@ -24,25 +25,32 @@ def example_route():  # sourcery skip: remove-unreachable-code
             
             matrix = matrix_dict['image']
             identity=matrix_dict['identity']
-            # Convert the matrix to a NumPy array
             matrix_array = np.array(matrix)
-        # Assuming `matrix_array` is of type int32
             if matrix_array.dtype == np.int32:
-               # Clip and scale values to the 0-255 range for uint8
-               matrix_array = np.clip(matrix_array, 0, 255).astype(np.uint8)
-            # Reshape the array to the desired shape
+                matrix_array = np.clip(matrix_array, 0, 255).astype(np.uint8)
             reshaped_array = cv2.resize(matrix_array, dsize=(640, 640), interpolation=cv2.INTER_AREA)
             # Plot the image
             plt.imshow(reshaped_array)
             embedder = FaceNet()
-            encoding=img_to_encoding
+            
+    
+            
+            # Create PIL image
+            image = Image.fromarray(reshaped_array)
+            
+            
+            
+            
+            verified=verify(image,identity,embedder)
+            
+
 
     
             # Do something with the data
             # For demonstration, let's return a JSON response with the received data
             return jsonify({
-                "imageArray":reshaped_array,
-                "true":identity
+                "name":str(identity),
+                "true":str(verified)
             }) 
             
         else:
