@@ -1,14 +1,14 @@
 from django.db import models
 
 # Create your models here.
-from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class admin(models.Model):
-    clientID = models.IntegerField(primary_key=True)
+    adminId = models.IntegerField(primary_key=True)
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    mName = models.CharField(max_length=100)
+    email = models.EmailField(max_length=254, unique=True, null=True)
 
 
 class Court(models.Model):
@@ -42,14 +42,17 @@ class Food(models.Model):
     unitPrice = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField()
     Maxquantity = models.IntegerField()
-    vendingMachineId = models.ForeignKey(VendingMachine, through='InventoryRent')  # ManyToMany relationship
+    vendingMachineId = models.ForeignKey(VendingMachine, on_delete=models.CASCADE)  # ManyToMany relationship
 
 
 class Client(models.Model):
-    clientID = models.IntegerField(primary_key=True)
-    username = models.CharField(max_length=100)
+    clientId = models.IntegerField(primary_key=True)
     password = models.CharField(max_length=100)
-    mName = models.CharField(max_length=100)
+    firstName = models.CharField(max_length=20,null=True)
+    lastName = models.CharField(max_length=20,null=True)
+
+    email = models.EmailField(max_length=254, unique=True, null=True)
+    number = PhoneNumberField(null=True)
 
 
 class Reservation(models.Model):
@@ -59,6 +62,8 @@ class Reservation(models.Model):
     date = models.DateField()
     startTime = models.TimeField()
     endTime = models.TimeField()
+    token = models.CharField(max_length=100,null=True)
+
 
 
 

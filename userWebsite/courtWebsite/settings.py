@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'frontend',
     'backend',
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
@@ -77,10 +78,15 @@ WSGI_APPLICATION = 'courtWebsite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'courtautomation',
+        'USER': 'root',
+        'PASSWORD': 'a',
+        'HOST': 'localhost',   # Or your MySQL server IP address
+        'PORT': '3306',        # Default MySQL port
     }
 }
+
 
 
 # Password validation
