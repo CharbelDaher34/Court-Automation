@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import traceback
 import cv2
+from keras_facenet import FaceNet
+from AiFiles.utils.helper import img_to_encoding
 
 app = Flask(__name__)
 
@@ -32,7 +34,9 @@ def example_route():  # sourcery skip: remove-unreachable-code
             reshaped_array = cv2.resize(matrix_array, dsize=(640, 640), interpolation=cv2.INTER_AREA)
             # Plot the image
             plt.imshow(reshaped_array)
-            plt.show()
+            embedder = FaceNet()
+            encoding=img_to_encoding
+
     
             # Do something with the data
             # For demonstration, let's return a JSON response with the received data
