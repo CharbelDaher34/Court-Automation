@@ -8,7 +8,14 @@ from keras_facenet import FaceNet
 from AiFiles.utils.helper import img_to_encoding
 from AiFiles.utils.helper import verify
 from PIL import Image
+from ultralytics import YOLO
+
 app = Flask(__name__)
+
+##Ai models
+embedder = FaceNet()
+tflite_model = YOLO('./tfliteModel/weights/best_saved_model/best_float32.tflite',task='detect')
+
 
 @app.route('/examplee', methods=['GET'])
 def example_routee(): 
@@ -26,12 +33,11 @@ def example_route():  # sourcery skip: remove-unreachable-code
             matrix = matrix_dict['image']
             identity=matrix_dict['identity']
             matrix_array = np.array(matrix)
-            if matrix_array.dtype == np.int32:
-                matrix_array = np.clip(matrix_array, 0, 255).astype(np.uint8)
-            reshaped_array = cv2.resize(matrix_array, dsize=(640, 640), interpolation=cv2.INTER_AREA)
-            # Plot the image
-            plt.imshow(reshaped_array)
-            embedder = FaceNet()
+            # if matrix_array.dtype == np.int32:
+            #     matrix_array = np.clip(matrix_array, 0, 255).astype(np.uint8)
+            # reshaped_array = cv2.resize(matrix_array, dsize=(640, 640), interpolation=cv2.INTER_AREA)
+            # # Plot the image
+            # plt.imshow(reshaped_array)
             
     
             
@@ -40,6 +46,7 @@ def example_route():  # sourcery skip: remove-unreachable-code
             
             
             
+            results = tflite_model('best.jpeg')
             
             verified=verify(image,identity,embedder)
             
@@ -60,6 +67,13 @@ def example_route():  # sourcery skip: remove-unreachable-code
             f.write(str(e) + "\n")
         # Return an error response with a generic message
         return jsonify({"error": "An unexpected error occurred. Please check the server logs."}), 500
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
