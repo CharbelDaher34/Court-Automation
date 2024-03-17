@@ -40,8 +40,9 @@ def example_route():  # sourcery skip: remove-unreachable-code
             faces = image_to_faces(image)
             
             for face in faces:
+                face.show()
                 
-                verified=verify(image,identity)
+                verified=verify(face,identity)
                 
                 if(verified):
                     return jsonify({

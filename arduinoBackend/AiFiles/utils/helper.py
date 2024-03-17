@@ -83,19 +83,22 @@ def verify(img, identity):
     # Example usage:
     start_dir = '.'  # Start searching from the current directory
     data = find_encoding_json(start_dir)
+    for enc in data[identity]:
+        
     # Step 2: Compute distance with identity's image (≈ 1 line)
     # with open("encoding.json", "r") as f:
     #     data = json.load(f)
-    dist = np.linalg.norm(encoding-data[identity])
-    # Step 3: Open the door if dist < 0.7, else don't open (≈ 3 lines)
-    if dist<0.7:
-        print(f"It\'s {identity}, welcome in ")
-        door_open = True
-    else:
-        print(f"It\'s not {identity} , go away")
-        door_open = False
-    ### END CODE HERE        
-    return door_open
+        dist = np.linalg.norm(encoding-enc)
+        # Step 3: Open the door if dist < 0.7, else don't open (≈ 3 lines)
+        if dist<0.7:
+            print(f"It\'s {identity}, welcome in ")
+            door_open = True
+        else:
+            print(f"It\'s not {identity} , go away")
+            door_open = False
+        ### END CODE HERE        
+        return door_open
+    return False
 
 
 
