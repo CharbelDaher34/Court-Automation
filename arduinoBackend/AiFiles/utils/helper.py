@@ -9,7 +9,15 @@ from ultralytics import YOLO
 from keras_facenet import FaceNet
 
 embedder=FaceNet()
-tflite_model =YOLO("AiFiles/faceDetectionModel/best_float32.tflite",task='detect')
+for root, dirs, files in os.walk(".."):
+    if 'best_float32.tflite' in files:
+        model_path = os.path.join(root, 'best_float32.tflite')
+        tflite_model =YOLO(model_path,task='detect')
+
+ 
+
+
+# tflite_model =YOLO("AiFiles/faceDetectionModel/best_float32.tflite",task='detect')
 
 def imgPath_to_encoding(image_path):
     image = Image.open(image_path)
@@ -55,7 +63,7 @@ def img_to_encoding(image):
         face_array = np.clip(face_array, 0, 255).astype(np.uint8) 
     face_array = cv2.resize(face_array, dsize=(640, 640), interpolation=cv2.INTER_AREA)
     try:
-        embedding = embedder.extract(face_array, threshold=0.95)[0]['embedding']
+        embedding = embedder.extract(face_array, threshold=0.80)[0]['embedding']
     except Exception as e:
         # Code to handle any error
         print(f"An error occurred: {e}")
@@ -63,43 +71,19 @@ def img_to_encoding(image):
     return embedding / np.linalg.norm(embedding, ord=2)
 
 def verify(img, identity):
-    """
-    Function that verifies if the person on the "image_path" image is "identity".
-    
-    Arguments:
-        image_path -- path to an image
-        identity -- string, name of the person you'd like to verify the identity. Has to be an employee who works in the office.
-        database -- python dictionary mapping names of allowed people's names (strings) to their encodings (vectors).
-        model -- your Inception model instance in Keras
-    
-    Returns:
-        dist -- distance between the image_path and the image of "identity" in the database.
-        door_open -- True, if the door should open. False otherwise.
-    """
-    ### START CODE HERE
-    # Step 1: Compute the encoding for the image. Use img_to_encoding() see example above. (≈ 1 line)
-    
     encoding = img_to_encoding(img)
-    # Example usage:
-    start_dir = '.'  # Start searching from the current directory
+    start_dir = '.' 
     data = find_encoding_json(start_dir)
     for enc in data[identity]:
-        
-    # Step 2: Compute distance with identity's image (≈ 1 line)
-    # with open("encoding.json", "r") as f:
-    #     data = json.load(f)
         dist = np.linalg.norm(encoding-enc)
-        # Step 3: Open the door if dist < 0.7, else don't open (≈ 3 lines)
         if dist<0.7:
             print(f"It\'s {identity}, welcome in ")
             door_open = True
         else:
             print(f"It\'s not {identity} , go away")
             door_open = False
-        ### END CODE HERE        
         return door_open
     return False
-
 
 
 def find_encoding_json(start_dir):
@@ -112,6 +96,29 @@ def find_encoding_json(start_dir):
     return None  # If encoding.json is not found in any directory
 
 
+def add_encoding_to_json(encoding,identity):
+    start_dir='.'
+    for root, dirs, files in os.walk(start_dir):
+        if 'encoding.json' in files:
+            encoding_json_path = os.path.join(root, 'encoding.json')
+            
+            with open(encoding_json_path, 'r') as f:
+                data =json.load(f)
+            
+            if identity in data.keys():
+                # Ensure 'identity' is a list (create an empty list if it doesn't exist)
+                data['identity'] = data.get('identity', [])
+                data['identity'].append(encoding.tolist())
+            else:
+                data['identity'] = [encoding.tolist()]
+            
+            # Write the updated data back to the JSON file
+            with open(encoding_json_path, 'w') as f:
+                json.dump(data, f)
+
+
+            return data
+    return None 
 
 
 def image_to_faces(img):
