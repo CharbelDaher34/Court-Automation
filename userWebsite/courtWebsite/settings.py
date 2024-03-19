@@ -11,9 +11,19 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-
+import os
+import sys
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+os.environ['DJANGO_SETTINGS_MODULE'] = 'courtWebsite.settings'
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "courtWebsite.settings")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
+
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "courtWebsite.settings")
+
+import django
+django.setup()
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,7 +50,8 @@ INSTALLED_APPS = [
     'frontend',
     'backend',
     "phonenumber_field",
-    "phonenumbers"
+    "phonenumbers",
+    "django_seed"
 ]
 
 MIDDLEWARE = [
