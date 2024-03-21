@@ -13,21 +13,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 import sys
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(BASE_DIR)
-os.environ['DJANGO_SETTINGS_MODULE'] = 'courtWebsite.settings'
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "courtWebsite.settings")
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-# BASE_DIR = Path(__file__).resolve().parent.parent
-
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "courtWebsite.settings")
-
-import django
-django.setup()
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-3c1u4cg^-*&)$9$+*ge&o53@%^=ekfqi+js##2wqh_2^-_=oz9'

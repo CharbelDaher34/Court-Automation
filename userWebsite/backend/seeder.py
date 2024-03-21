@@ -1,16 +1,21 @@
+import pretty_errors
 from django.contrib.auth.hashers import make_password  # for password hashing
 import random
-from models import Admin, Court, CourtSection, Dealer, VendingMachine, Food#, Client, Reservation, FoodPurchase, InventorySports,InventoryRent
+from backend.models import Admin, Court, CourtSection, Dealer, VendingMachine, Food#, Client, Reservation, FoodPurchase, InventorySports,InventoryRent
 from django.core.exceptions import ValidationError  # for handling potential quantity errors
-
-
 def create_admin():
     """Creates an admin user with specified details."""
-    admin = Admin.objects.create(
-        username="charbel",
-        password=make_password("daher"),  # Replace with a stronger password
-        email="charbeldaher34@gmail.com",
-    )
+    try:
+        
+        defaults = {
+            'username': "charbel",
+            'password': make_password("daher"),  # Replace with a stronger password
+            'email': "charbeldaher34@gmail.com",
+        }
+        admin, created = Admin.objects.get_or_create(**defaults)
+    except:
+        admin=Admin.objects.get(email="charbeldaher34@gmail.com")
+
     return admin
 
 
@@ -78,19 +83,19 @@ def create_three_dealers():
                     name="Dealer 1",
                     address="Address 1",
                     contact_info="Contact Info 1",
-                    margin_of_profit=0.1,
+                    marginOfProfit=0.1,
                 ),
                 Dealer.objects.create(
                     name="Dealer 2",
                     address="Address 2",
                     contact_info="Contact Info 2",
-                    margin_of_profit=0.15,
+                    marginOfProfit=0.15,
                 ),
                 Dealer.objects.create(
                     name="Dealer 3",
                     address="Address 3",
                     contact_info="Contact Info 3",
-                    margin_of_profit=0.2,
+                    marginOfProfit=0.2,
                 ),
             )
         )
@@ -115,7 +120,7 @@ class MySeeder(object):
 
 
         for courtId in court_ids:
-            court_sections=CourtSection.objects.get(courtId=courtId)
+            court_sections=CourtSection.objects.filter(courtId=courtId)
             for cs in court_sections:
                 create_vending_machine(cs)
         create_three_dealers()
@@ -131,13 +136,11 @@ class MySeeder(object):
             random_quantity = random.randint(1, 100)
             random_max_quantity = random.randint(random_quantity, 200)
 
-            dealer=Dealer.objects.all()
+            dealer=Dealer.objects.first()
 
 # Call the function with random inputs
             create_food(random_name, random_description, random_unit_price, random_quantity, random_max_quantity,vm,dealer)
                 
-            
 
-seeder = MySeeder()
-seeder.run()
+
 

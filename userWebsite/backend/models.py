@@ -4,7 +4,7 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
 
-class admin(models.Model):
+class Admin(models.Model):
     adminId = models.AutoField(primary_key=True)
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
@@ -15,7 +15,7 @@ class Court(models.Model):
     courtId = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
-    adminId = models.ForeignKey(admin, on_delete=models.SET_NULL,null=True)
+    adminId = models.ForeignKey(Admin, on_delete=models.SET_NULL,null=True)
 
 class CourtSection(models.Model):
     courtSectionId = models.AutoField(primary_key=True)
@@ -28,7 +28,8 @@ class CourtSection(models.Model):
     ]
     sectionType = models.CharField(max_length=20, choices=TYPE_CHOICES)
     fansCapacity = models.IntegerField()
-    
+    openTime = models.TimeField(null=True)
+    closeTime = models.TimeField(null=True)    
 
 class VendingMachine(models.Model):
     vendingMachineId = models.AutoField(primary_key=True)
