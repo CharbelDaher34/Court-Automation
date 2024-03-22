@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Court Sections</title>
+  <link rel="stylesheet" href="{% static 'static/css/styles.css' %}" />
+</head>
+<body>
+  <h1>Court Sections</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Photo</th>
+        <th>Section Name</th>
+        <th>Section Type</th>
+        <th>Fan Capacity</th>
+        <th>Open Time</th>
+        <th>Close Time</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for court_section in courtSections %}
+      <tr>
+        <td>
+          <img src="{{ court_section.photo.url }}" alt="{{ court_section.sectionName }} Photo" width="100" height="100">
+        </td>
+        <td>{{ court_section.sectionName }}</td>
+        <td>{{ court_section.sectionType }}</td>
+        <td>{{ court_section.fansCapacity }}</td>
+        <td>{{ court_section.openTime|timeformat:'H:i' }}</td>  <td>{{ court_section.closeTime|timeformat:'H:i' }}</td>  <td>
+          <form method="POST" action="{% url 'your_view_name' court_section.courtSectionId %}">  {% csrf_token %}
+            <button type="submit">Book Now</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

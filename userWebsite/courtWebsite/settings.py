@@ -11,12 +11,13 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import os
+import os,inspect
 import sys
+import pretty_errors
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-3c1u4cg^-*&)$9$+*ge&o53@%^=ekfqi+js##2wqh_2^-_=oz9'
-
+BASE_DIR=Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -36,7 +37,7 @@ INSTALLED_APPS = [
     'backend',
     "phonenumber_field",
     "phonenumbers",
-    "django_seed"
+    "django_seed",
 ]
 
 MIDDLEWARE = [
@@ -50,7 +51,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'courtWebsite.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

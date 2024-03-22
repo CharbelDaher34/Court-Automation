@@ -1,70 +1,138 @@
 # frontend/views.py
-
-from django.shortcuts import render,get_object_or_404
+import pretty_errors
+from django.shortcuts import render,get_object_or_404,redirect
 from django.http import HttpResponseRedirect, HttpResponse
-from datetime import timedelta
-from .models import CourtSection, Reservation
-
-
+from datetime import timedelta,datetime
+from backend.models import CourtSection, Reservation, Court,Admin
+import json
 
 def home_view(request):
-    context={}
+    courtDetails=[]
+    courts=Court.objects.all()
+    for court in courts:
+        admin=Admin.objects.get(adminId=court.adminId.adminId)
+        courtDetails.append((court.courtId,court.name,court.location,admin.username,admin.number))
+    context={
+        "courtDetails":courtDetails
+    }
     return render(request, 'home.html',context)
 
 
-
-def available_times(request, court_section_id, date):
+def courtSectionView(request,courtId):
+    courtSections=CourtSection.objects.filter(courtId=courtId)
+    
+    context = {
+      'courtSections': courtSections,
+    }
+def available_times(request, courtSectionId):
   """
   This view retrieves available times for a court section on a chosen date.
   """
-  court_section = get_object_or_404(CourtSection, pk=court_section_id)
+  context={}
+  body = json.loads(request.body)
+
+#   body=request.json
+  date=body['date']
+  court_section = CourtSection.objects.get(int(courtSectionId))
+  date = datetime.strptime(date, '%Y-%m-%d').date()
 
   # Check if open and close times are set
   if not court_section.openTime or not court_section.closeTime:
-    return render(request, 'reservations/available_times.html', {
-      'court_section': court_section,
-      'date': date,
-      'available_times': [],
-      'error_message': "Court section does not have open or close times defined."
-    })
+      return render(request, 'home.html',context)
 
-  # Convert date and times to datetime objects for easier manipulation
-  selected_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-  open_time = court_section.openTime
-  close_time = court_section.closeTime
+ 
 
   # Get all reservations for the court section on the selected date
   reservations = Reservation.objects.filter(
       court_section=court_section,
-      date=selected_date
+      date=date
   )
-
+  
+  # List to store tuples of variables
+  reservations_data = []
+  openTime = court_section.openTime
+  closeTime = court_section.closeTime
+  # Iterate over reservations and save variables as tuple in the list
+  for reservation in reservations:
+      reservation_tuple = (reservation.startTime, reservation.endTime)
+      reservations_data.append(reservation_tuple)
+  
+  
   # Initialize list to store available time slots
-  available_times = []
+  available_slots = []
+  reservations.sort(key=lambda x: x[0])  # Assuming index 0 represents start time
+  
+  # Check if there are reservations for the court
+  if reservations:
+      # Calculate available time slots between reservations and opening/closing times
+      if reservations[0][0] > openTime:
+          available_slots.append((openTime, reservations[0][0]))
+      
+      for i in range(len(reservations) - 1):
+          if reservations[i][1] < reservations[i + 1][0]:
+              available_slots.append((reservations[i][1], reservations[i + 1][0]))
+      
+      if reservations[-1][1] < closeTime:
+          available_slots.append((reservations[-1][1], closeTime))
+  else:
+      # If there are no reservations, consider the entire time as available
+      available_slots.append((openTime, closeTime))
 
-  # Loop through each hour between open and close time
-  current_time = open_time
-  while current_time < close_time:
-    # Check for overlapping reservations
-    overlapping_reservation = reservations.filter(
-      startTime__lt=current_time + timedelta(hours=1),
-      endTime__gt=current_time
-    ).first()
 
-    if not overlapping_reservation:
-      # No overlapping reservation, add time slot to available
-      available_times.append({
-        'start_time': current_time.strftime('%H:%M:%S'),
-        'end_time': (current_time + timedelta(hours=1)).strftime('%H:%M:%S')
-      })
-    
-    # Move to the next hour
-    current_time += timedelta(hours=1)
+
 
   context = {
     'court_section': court_section,
     'date': date,
-    'available_times': available_times,
+    'available_slots': available_times,
   }
   return render(request, 'reservations/available_times.html', context)
+
+
+
+
+
+def reserve_court_section(request,courtSectionId,date):
+    context={}
+    if request.method == 'POST':
+        
+        courtSectionId = request.POST.get('court_section_id')
+        available_slots = request.POST.get('available_slots')  # This will be a string representation of the list
+        courtSection=CourtSection.objects.get(courtSectionId=courtSectionId)
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+        
+        valid_time = False
+        for slot in available_slots:
+          if start_time >= slot[0].strftime('%H:%M:%S') and end_time <= slot[1].strftime('%H:%M:%S'):
+            valid_time = True
+            break
+    
+        if not valid_time:
+          context['error_message'] = 'Selected time slot is not available.'
+          context = {
+             'court_section': courtSection,
+             'date': date,
+             'available_slots': available_times,
+           }
+          return render(request, 'reservations.html', context)
+
+
+        # Perform validation of start_time and end_time if necessary
+
+        # Assuming court_section and date are available in the context
+        # Create a new Reservation object and save it
+        courtSection=CourtSection.objects.get(courtSectionId=courtSectionId)
+        reservation = Reservation.objects.create(
+            court_section=courtSection,
+            date=date,
+            startTime=start_time,
+            endTime=end_time
+        )
+
+        # Redirect to a success page or the same page with a success message
+        return redirect('success_page')  # Change 'success_page' to your success page URL name
+
+    # If the request method is GET or if form submission fails, render the same page with the form
+    return render(request, 'your_template.html', context)
 

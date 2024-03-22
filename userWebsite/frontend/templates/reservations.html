@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserve Court Section</title>
+</head>
+<body>
+    <h1>Reserve Court Section</h1>
+        <h2>Court Section: {{ court_section.name }}</h2>
+    <h2>Date: {{ date }}</h2>
+
+    <h3>Available Time Slots:</h3>
+    <ul>
+        {% for slot in available_slots %}
+            <li>{{ slot.0 }} - {{ slot.1 }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Reserve Time Slot:</h3>
+    <form action="{% url 'frontend:reserve_court_section' %}" method="post">
+        {% csrf_token %}
+        <label for="start_time">Start Time:</label>
+        <input type="time" id="start_time" name="start_time" required>
+        <label for="end_time">End Time:</label>
+        <input type="time" id="end_time" name="end_time" required>
+        <button type="submit">Reserve</button>
+
+        <input type="hidden" name="court_section_id" value="{{ court_section.courtSectionId }}">
+        <input type="hidden" name="available_slots" value="{{ available_slots }}">
+      
+
+    </form>
+</body>
+</html>

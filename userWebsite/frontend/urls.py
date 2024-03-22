@@ -6,5 +6,7 @@ from . import views
 urlpatterns = [
     path('home/', view=views.home_view, name='home'),
     # other URL patterns...
+    path('available_times/<courtSectionId>/', views.available_times, name='available_times'),
+
 ]
 

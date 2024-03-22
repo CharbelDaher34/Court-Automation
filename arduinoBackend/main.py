@@ -1,12 +1,9 @@
 from flask import Flask, request, jsonify
 import json
 import numpy as np
-import matplotlib.pyplot as plt
-import traceback
 import cv2
 from AiFiles.utils.helper import img_to_encoding , verify, image_to_faces, add_encoding_to_json
 from PIL import Image
-from ultralytics import YOLO
 
 app = Flask(__name__)
 
