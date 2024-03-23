@@ -1,4 +1,4 @@
-{% load static %}
+{% comment %} {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,8 +30,12 @@
         <td>{{ court_section.sectionName }}</td>
         <td>{{ court_section.sectionType }}</td>
         <td>{{ court_section.fansCapacity }}</td>
-        <td>{{ court_section.openTime|timeformat:'H:i' }}</td>  <td>{{ court_section.closeTime|timeformat:'H:i' }}</td>  <td>
-          <form method="POST" action="{% url 'your_view_name' court_section.courtSectionId %}">  {% csrf_token %}
+
+        <td>{{ court_section.openTime}}</td>
+        <td>{{ court_section.closeTime}}</td>
+        <td>
+          <form method="POST" action="{% url 'available_times' court_section.courtSectionId %}">
+            {% csrf_token %}
             <button type="submit">Book Now</button>
           </form>
         </td>
@@ -40,4 +44,58 @@
     </tbody>
   </table>
 </body>
+</html> {% endcomment %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Court Sections</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'static/css/styles.css' %}" />
+</head>
+
+<body>
+  <div class="container">
+    <h1>Court Sections</h1>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Photo</th>
+          <th>Section Name</th>
+          <th>Section Type</th>
+          <th>Fan Capacity</th>
+          <th>Open Time</th>
+          <th>Close Time</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for court_section in courtSections %}
+        <tr>
+          <td>
+            <img src="{{ court_section.photo.url }}" alt="{{ court_section.sectionName }} Photo" width="100" height="100">
+          </td>
+          <td>{{ court_section.sectionName }}</td>
+          <td>{{ court_section.sectionType }}</td>
+          <td>{{ court_section.fansCapacity }}</td>
+          <td>{{ court_section.openTime }}</td>
+          <td>{{ court_section.closeTime }}</td>
+          <td>
+            <form method="POST" action="{% url 'available_times' court_section.courtSectionId %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary">Book Now</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jY38PBHQiwNzxEh7zZN9orUeIqUWO1" crossorigin="anonymous"></script>
+</body>
+
 </html>

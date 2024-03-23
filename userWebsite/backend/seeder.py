@@ -3,6 +3,8 @@ from django.contrib.auth.hashers import make_password  # for password hashing
 import random
 from backend.models import Admin, Court, CourtSection, Dealer, VendingMachine, Food#, Client, Reservation, FoodPurchase, InventorySports,InventoryRent
 from django.core.exceptions import ValidationError  # for handling potential quantity errors
+from datetime import time
+
 def create_admin():
     """Creates an admin user with specified details."""
     try:
@@ -39,6 +41,9 @@ def create_court_sections(court):
             sectionName=f"Section {section_type}",
             sectionType=section_type,
             fansCapacity=500,
+            openTime=time(9,0),
+            closeTime=time(22,0)
+            
         )
 
 

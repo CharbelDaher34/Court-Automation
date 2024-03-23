@@ -24,6 +24,7 @@ def courtSectionView(request,courtId):
     context = {
       'courtSections': courtSections,
     }
+    return render(request,'court_section.html',context)
 def available_times(request, courtSectionId):
   """
   This view retrieves available times for a court section on a chosen date.
