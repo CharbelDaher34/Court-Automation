@@ -25,17 +25,16 @@ def courtSectionView(request,courtId):
       'courtSections': courtSections,
     }
     return render(request,'court_section.html',context)
+
 def available_times(request, courtSectionId):
   """
   This view retrieves available times for a court section on a chosen date.
   """
   context={}
-  body = json.loads(request.body)
-
-#   body=request.json
-  date=body['date']
-  court_section = CourtSection.objects.get(int(courtSectionId))
-  date = datetime.strptime(date, '%Y-%m-%d').date()
+  selected_date = request.POST.get('date')
+  court_section=CourtSection.objects.get(courtSectionId=courtSectionId)
+        
+  date = datetime.strptime(str(selected_date), '%Y-%m-%d').date()
 
   # Check if open and close times are set
   if not court_section.openTime or not court_section.closeTime:
@@ -45,10 +44,10 @@ def available_times(request, courtSectionId):
 
   # Get all reservations for the court section on the selected date
   reservations = Reservation.objects.filter(
-      court_section=court_section,
+      courtsectionID=court_section,
       date=date
   )
-  
+  a=len(reservations)
   # List to store tuples of variables
   reservations_data = []
   openTime = court_section.openTime
@@ -61,7 +60,18 @@ def available_times(request, courtSectionId):
   
   # Initialize list to store available time slots
   available_slots = []
-  reservations.sort(key=lambda x: x[0])  # Assuming index 0 represents start time
+  if len(reservations_data)==0:
+    context = {
+      'court_section': court_section,
+      'date': date,
+      'available_slots': [(openTime, closeTime)]
+     }
+    
+    return render(request, 'reservations.html', context)
+      
+      
+      
+  reservations_data.sort(key=lambda x: x[0])  # Assuming index 0 represents start time
   
   # Check if there are reservations for the court
   if reservations:
@@ -85,9 +95,9 @@ def available_times(request, courtSectionId):
   context = {
     'court_section': court_section,
     'date': date,
-    'available_slots': available_times,
+    'available_slots': available_slots,
   }
-  return render(request, 'reservations/available_times.html', context)
+  return render(request, 'reservations.html', context)
 
 
 
@@ -97,8 +107,8 @@ def reserve_court_section(request,courtSectionId,date):
     context={}
     if request.method == 'POST':
         
-        courtSectionId = request.POST.get('court_section_id')
-        available_slots = request.POST.get('available_slots')  # This will be a string representation of the list
+        # courtSectionId = request.POST.get('court_section_id')
+        # available_slots = request.POST.get('available_slots')  # This will be a string representation of the list
         courtSection=CourtSection.objects.get(courtSectionId=courtSectionId)
         start_time = request.POST.get('start_time')
         end_time = request.POST.get('end_time')

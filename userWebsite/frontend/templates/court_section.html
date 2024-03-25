@@ -86,6 +86,7 @@
           <td>
             <form method="POST" action="{% url 'available_times' court_section.courtSectionId %}">
               {% csrf_token %}
+              <input type="date" name="date" id="date" required>
               <button type="submit" class="btn btn-primary">Book Now</button>
             </form>
           </td>
