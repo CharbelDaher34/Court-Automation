@@ -74,17 +74,17 @@ def available_times(request, courtSectionId):
   reservations_data.sort(key=lambda x: x[0])  # Assuming index 0 represents start time
   
   # Check if there are reservations for the court
-  if reservations:
+  if reservations_data:
       # Calculate available time slots between reservations and opening/closing times
-      if reservations[0][0] > openTime:
-          available_slots.append((openTime, reservations[0][0]))
+      if reservations_data[0][0] > openTime:
+          available_slots.append((openTime, reservations_data[0][0]))
       
-      for i in range(len(reservations) - 1):
-          if reservations[i][1] < reservations[i + 1][0]:
-              available_slots.append((reservations[i][1], reservations[i + 1][0]))
+      for i in range(len(reservations_data) - 1):
+          if reservations_data[i][1] < reservations_data[i + 1][0]:
+              available_slots.append((reservations_data[i][1], reservations_data[i + 1][0]))
       
-      if reservations[-1][1] < closeTime:
-          available_slots.append((reservations[-1][1], closeTime))
+      if reservations_data[-1][1] < closeTime:
+          available_slots.append((reservations_data[-1][1], closeTime))
   else:
       # If there are no reservations, consider the entire time as available
       available_slots.append((openTime, closeTime))

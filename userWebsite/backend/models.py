@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password
 
 # Create your models here.
 from phonenumber_field.modelfields import PhoneNumberField
@@ -64,8 +65,8 @@ class Client(models.Model):
     lastName = models.CharField(max_length=20,null=True)
     email = models.EmailField(max_length=254, unique=True, null=True)
     number = PhoneNumberField(null=True,unique=True)
-    address = models.CharField(max_length=200, null=True)
     country = models.CharField(max_length=100, null=True)
+    address = models.CharField(max_length=200, null=True)    
     date_of_birth = models.DateField( null=True)
     sex = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female')], null=True)
     def identity(self):
@@ -74,12 +75,16 @@ class Client(models.Model):
     def __str__(self):
         return self.identity()
     
+    def save(self, *args, **kwargs):
+        # Hash the password before saving
+        self.password = make_password(self.password)
+        super().save(*args, **kwargs)
+    
     
 
 class Reservation(models.Model):
     reservationID = models.AutoField(primary_key=True)
     clientId = models.ForeignKey(Client, on_delete=models.SET_NULL,null=True)
-
     # clientId = models.ForeignKey(Client, on_delete=models.CASCADE)
     courtsectionID = models.ForeignKey(CourtSection, on_delete=models.SET_NULL,null=True)
     date = models.DateField()

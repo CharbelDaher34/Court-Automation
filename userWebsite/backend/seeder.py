@@ -1,9 +1,11 @@
 import pretty_errors
 from django.contrib.auth.hashers import make_password  # for password hashing
 import random
-from backend.models import Admin, Court, CourtSection, Dealer, VendingMachine, Food#, Client, Reservation, FoodPurchase, InventorySports,InventoryRent
+from backend.models import Admin, Court, CourtSection, Dealer, VendingMachine, Food, Client, Reservation, FoodPurchase, InventorySports,InventoryRent
 from django.core.exceptions import ValidationError  # for handling potential quantity errors
 from datetime import time
+from phonenumber_field.phonenumber import PhoneNumber
+from datetime import datetime, timedelta
 
 def create_admin():
     """Creates an admin user with specified details."""
@@ -111,6 +113,83 @@ def create_three_dealers():
 
 
 
+def create_client(first_name, last_name, email, password, phone_number=None, address=None, country=None, date_of_birth=None, sex=None):
+    if not email:
+        raise ValidationError("Email address is required.")
+
+    try:
+        # Attempt to create the client with unique email validation
+        client = Client.objects.create(
+            firstName=first_name,
+            lastName=last_name,
+            email=email,
+            password=password,  # Add password field
+            number=phone_number,
+            address=address,
+            country=country,
+            date_of_birth=date_of_birth,
+            sex=sex,
+        )
+    except Exception as e:  # Catch potential duplicate email errors
+        if "unique" in str(e):  # Check if error is related to unique email
+            raise ValidationError("Email address must be unique.")
+        else:
+            raise e  # Re-raise other exceptions
+
+    return client
+
+
+def create_random_client():
+
+    first_name = "Charbel"
+    last_name = "Daher"
+    email = "charbeldaher345@gmail.com"
+    password = "Daher1234"  # Generate a random password
+    phone_number = PhoneNumber.from_string("+96170435237")
+    country = "LB"  # Set country to Lebanon
+    lebanon_cities = [
+        "Beirut", "Tripoli", "Sidon", "Tyre", "Byblos", "Jounieh", "Baabda", "Zahle", "Baalbek", "Batroun",
+        "Nabatieh", "Zgharta", "Bsharri", "Aley", "Chouf", "Bint Jbeil", "Marjaayoun", "Hasbaya", "Rashaya",
+        "Hermel", "Akkar", "Bekaa", "Keserwan", "Metn"
+    ]
+
+    address = random.choice(lebanon_cities)
+    date_of_birth = "2002-01-1"  # Random date
+    sex = random.choice(['M', 'F'])
+
+    return create_client(first_name, last_name, email, password, phone_number, address, country, date_of_birth, sex)
+
+
+
+
+def create_reservations():
+    # Example parameters for reservations
+    reservations_data = [
+        {
+            'clientId': Client.objects.get(clientId=1),  # Assuming client ID is 1
+            'courtsectionID': CourtSection.objects.get(courtSectionId=1),  # Assuming court section ID is 1
+            'date': datetime.now().date(),  # Today's date
+            'startTime': datetime.now().time(),  # Current time
+            'endTime': (datetime.now() + timedelta(hours=2)).time(),  # One hour later
+            'token': 'example_token1'  # Example token
+        },
+        {
+            'clientId': Client.objects.get(clientId=1),  # Assuming client ID is 1
+            'courtsectionID': CourtSection.objects.get(courtSectionId=1),  # Assuming court section ID is 2
+            'date': datetime.now().date(),  # Tomorrow's date
+            'startTime': (datetime.now()+ timedelta(hours=4)).time(),  # Current time
+            'endTime': (datetime.now() + timedelta(hours=6)).time(),  # One hour later
+            'token': 'example_token2'  # Example token
+        },
+        # Add more reservation data as needed
+    ]
+
+    # Create reservations
+    for data in reservations_data:
+        reservation = Reservation.objects.create(**data)
+        print(f"Reservation created: {reservation}")
+
+# Call the function to create reservations
 
 
 
@@ -145,7 +224,10 @@ class MySeeder(object):
 
 # Call the function with random inputs
             create_food(random_name, random_description, random_unit_price, random_quantity, random_max_quantity,vm,dealer)
-                
+        create_random_client()
+        create_reservations()
+
+        
 
 
 

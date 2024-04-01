@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "phonenumbers",
     "django_seed",
+    "django_countries",
 ]
 
 MIDDLEWARE = [
@@ -68,7 +69,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'courtWebsite.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
