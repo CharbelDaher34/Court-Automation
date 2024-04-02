@@ -18,7 +18,19 @@
     </ul>
 
     <h3>Reserve Time Slot:</h3>
+    
     <form action="{% url 'reserve_court_section' court_section.courtSectionId date %}" method="post">
+        {% csrf_token %}   
+        {{ form.as_p }}
+        <button type="submit">Reserve</button>
+    </form>
+    
+</body>
+</html>
+
+
+
+{% comment %} <form action="{% url 'reserve_court_section' court_section.courtSectionId date %}" method="post">
         {% csrf_token %}
         <label for="start_time">Start Time:</label>
         <input type="time" id="start_time" name="start_time" required>
@@ -30,6 +42,4 @@
         <input type="hidden" name="available_slots" value="{{ available_slots }}">
       
 
-    </form>
-</body>
-</html>
+    </form> {% endcomment %}
