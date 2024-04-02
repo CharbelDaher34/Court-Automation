@@ -1,12 +1,13 @@
 # frontend/views.py
 import pretty_errors
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from datetime import timedelta, datetime
 from backend.models import CourtSection, Reservation, Court, Admin
 import json
 from frontend.forms import ReserveCourtSectionForm
 from datetime import date
+from django.http import HttpResponseRedirect
 
 
 # Create your views here.
@@ -32,85 +33,82 @@ def courtSectionView(request, courtId):
 
 
 def available_times(request):
-    """
-    This view retrieves available times for a court section on a chosen date.
-    """
-    context = {}
-    courtSectionId = request.POST.get('courtSectionId')
-    selected_date = request.POST.get("date")
-
-    # Check if courtSectionId or selected_date are None
-    if courtSectionId is None or selected_date is None:
-        return False
-
-    courtSectionId = int(courtSectionId)
-
-    year, month, day = map(int, selected_date.split("-"))
-    # Construct a date object
-    dateObj = date(year, month, day)
-    # date = datetime.strptime(str(selected_date), '%Y-%m-%d').date()
-    court_section = CourtSection.objects.get(courtSectionId=courtSectionId)
-
-    # Check if open and close times are set
-    if not court_section.openTime or not court_section.closeTime:
-        return render(request, "home.html", context)
-
-    # Get all reservations for the court section on the selected date
-    reservations = Reservation.objects.filter(
-        courtsectionID=court_section, date=dateObj
-    )
-    # List to store tuples of variables
-    reservations_data = []
-    openTime = court_section.openTime
-    closeTime = court_section.closeTime
-    # Iterate over reservations and save variables as tuple in the list
-    for reservation in reservations:
-        reservation_tuple = (reservation.startTime, reservation.endTime)
-        reservations_data.append(reservation_tuple)
-    form = ReserveCourtSectionForm()  # Create an instance of the form
-
-    # Initialize list to store available time slots
-    available_slots = []
-    if len(reservations_data) == 0:
+    if request.method == "POST":
+        context = {}
+        courtSectionId = request.POST.get("courtSectionId")
+        selected_date = request.POST.get("date")
+    
+        # Check if courtSectionId or selected_date are None
+        if courtSectionId is None or selected_date is None:
+            return False
+    
+        courtSectionId = int(courtSectionId)
+    
+        year, month, day = map(int, selected_date.split("-"))
+        # Construct a date object
+        dateObj = date(year, month, day)
+        # date = datetime.strptime(str(selected_date), '%Y-%m-%d').date()
+        court_section = CourtSection.objects.get(courtSectionId=courtSectionId)
+    
+        # Check if open and close times are set
+        if not court_section.openTime or not court_section.closeTime:
+            return render(request, "home.html", context)
+    
+        # Get all reservations for the court section on the selected date
+        reservations = Reservation.objects.filter(
+            courtsectionID=court_section, date=dateObj
+        )
+        # List to store tuples of variables
+        reservations_data = []
+        openTime = court_section.openTime
+        closeTime = court_section.closeTime
+        # Iterate over reservations and save variables as tuple in the list
+        for reservation in reservations:
+            reservation_tuple = (reservation.startTime, reservation.endTime)
+            reservations_data.append(reservation_tuple)
+        form = ReserveCourtSectionForm()  # Create an instance of the form
+    
+        # Initialize list to store available time slots
+        available_slots = []
+        if not reservations_data:
+            context = {
+                "court_section": court_section,
+                "date": dateObj,
+                "available_slots": [(openTime, closeTime)],
+                "form": form,
+            }
+    
+            return render(request, "reservations.html", context)
+    
+        reservations_data.sort(key=lambda x: x[0])  # Assuming index 0 represents start time
+    
+        # Check if there are reservations for the court
+        if reservations_data:
+            # Calculate available time slots between reservations and opening/closing times
+            if reservations_data[0][0] > openTime:
+                available_slots.append((openTime, reservations_data[0][0]))
+    
+            available_slots.extend(
+                (reservations_data[i][1], reservations_data[i + 1][0])
+                for i in range(len(reservations_data) - 1)
+                if reservations_data[i][1] < reservations_data[i + 1][0]
+            )
+            if reservations_data[-1][1] < closeTime:
+                available_slots.append((reservations_data[-1][1], closeTime))
+        else:
+            # If there are no reservations, consider the entire time as available
+            available_slots.append((openTime, closeTime))
+    
+        form = ReserveCourtSectionForm()  # Create an instance of the form
+    
         context = {
             "court_section": court_section,
             "date": dateObj,
-            "available_slots": [(openTime, closeTime)],
-            "form": form,
+            "available_slots": available_slots,
+            "form": form,  # Include the form in the context
         }
-
+    
         return render(request, "reservations.html", context)
-
-    reservations_data.sort(key=lambda x: x[0])  # Assuming index 0 represents start time
-
-    # Check if there are reservations for the court
-    if reservations_data:
-        # Calculate available time slots between reservations and opening/closing times
-        if reservations_data[0][0] > openTime:
-            available_slots.append((openTime, reservations_data[0][0]))
-
-        for i in range(len(reservations_data) - 1):
-            if reservations_data[i][1] < reservations_data[i + 1][0]:
-                available_slots.append(
-                    (reservations_data[i][1], reservations_data[i + 1][0])
-                )
-
-        if reservations_data[-1][1] < closeTime:
-            available_slots.append((reservations_data[-1][1], closeTime))
-    else:
-        # If there are no reservations, consider the entire time as available
-        available_slots.append((openTime, closeTime))
-
-    form = ReserveCourtSectionForm()  # Create an instance of the form
-
-    context = {
-        "court_section": court_section,
-        "date": dateObj,
-        "available_slots": available_slots,
-        "form": form,  # Include the form in the context
-    }
-
-    return render(request, "reservations.html", context)
 
 
 def reserve_court_section(request, courtSectionId, date):
@@ -122,6 +120,7 @@ def reserve_court_section(request, courtSectionId, date):
         courtSection = CourtSection.objects.get(courtSectionId=courtSectionId)
         start_time = request.POST.get("start_time")
         end_time = request.POST.get("end_time")
+        available_slots = request.POST.get("available_slots")
 
         valid_time = False
         for slot in available_slots:
@@ -133,11 +132,15 @@ def reserve_court_section(request, courtSectionId, date):
 
         if not valid_time:
             context["error_message"] = "Selected time slot is not available."
+            form = ReserveCourtSectionForm()  # Create an instance of the form
+
             context = {
                 "court_section": courtSection,
                 "date": date,
-                "available_slots": available_times,
+                "available_slots": available_slots,
+                "form": form,
             }
+
             return render(request, "reservations.html", context)
 
         # Perform validation of start_time and end_time if necessary
@@ -153,9 +156,7 @@ def reserve_court_section(request, courtSectionId, date):
         )
 
         # Redirect to a success page or the same page with a success message
-        return redirect(
-            "success_page"
-        )  # Change 'success_page' to your success page URL name
+        return render(request, "home.html", context)  # Change 'success_page' to your success page URL name
 
     # If the request method is GET or if form submission fails, render the same page with the form
-    return render(request, "your_template.html", context)
+    return render(request, "home.html", context)

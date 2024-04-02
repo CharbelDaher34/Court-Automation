@@ -8,7 +8,7 @@ urlpatterns = [
     # other URL patterns...
     path('available_times/', views.available_times, name='available_times'),
     path('court_sections/<courtId>/',views.courtSectionView, name='courtSectionView'),
-    path('reserve_court_section/<int:court_section_id>/<str:date>/', views.reserve_court_section, name='reserve_court_section'),
+    path('reserve_court_section/<int:courtSectionId>/<str:date>/', views.reserve_court_section, name='reserve_court_section'),
 
 
 ]
