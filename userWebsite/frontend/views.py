@@ -1,13 +1,12 @@
 # frontend/views.py
 import pretty_errors
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseBadRequest
 from datetime import timedelta, datetime
 from backend.models import CourtSection, Reservation, Court, Admin
 import json
 from frontend.forms import ReserveCourtSectionForm
 from datetime import date
-from django.http import HttpResponseRedirect
 
 
 # Create your views here.
@@ -31,7 +30,9 @@ def courtSectionView(request, courtId):
     }
     return render(request, "court_section.html", context)
 
+from django.views.decorators.http import require_http_methods
 
+@require_http_methods(["POST"])
 def available_times(request):
     if request.method == "POST":
         context = {}
@@ -66,7 +67,7 @@ def available_times(request):
         for reservation in reservations:
             reservation_tuple = (reservation.startTime, reservation.endTime)
             reservations_data.append(reservation_tuple)
-        form = ReserveCourtSectionForm()  # Create an instance of the form
+        form = ReserveCourtSectionForm([(openTime, closeTime)])  # Create an instance of the form
     
         # Initialize list to store available time slots
         available_slots = []
@@ -99,7 +100,7 @@ def available_times(request):
             # If there are no reservations, consider the entire time as available
             available_slots.append((openTime, closeTime))
     
-        form = ReserveCourtSectionForm()  # Create an instance of the form
+        form = ReserveCourtSectionForm(available_slots)  # Create an instance of the form
     
         context = {
             "court_section": court_section,
@@ -109,6 +110,9 @@ def available_times(request):
         }
     
         return render(request, "reservations.html", context)
+    if request.method == "GET":
+        print(request)
+    return request
 
 
 def reserve_court_section(request, courtSectionId, date):
@@ -155,8 +159,9 @@ def reserve_court_section(request, courtSectionId, date):
             endTime=end_time,
         )
 
-        # Redirect to a success page or the same page with a success message
         return render(request, "home.html", context)  # Change 'success_page' to your success page URL name
+
 
     # If the request method is GET or if form submission fails, render the same page with the form
     return render(request, "home.html", context)
+
