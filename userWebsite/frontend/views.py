@@ -7,16 +7,18 @@ from backend.models import CourtSection, Reservation, Court, Admin
 import json
 from frontend.forms import ReserveCourtSectionForm
 from datetime import date
+import os
+from PIL import Image
 
 
-# Create your views here.
 def home_view(request):
     courtDetails = []
     courts = Court.objects.all()
     for court in courts:
         admin = Admin.objects.get(adminId=court.adminId.adminId)
+        image_path = f"frontend/courtImages/{court.courtId}.jpeg"  # Adjusted path for static files
         courtDetails.append(
-            (court.courtId, court.name, court.location, admin.username, admin.number)
+            (court.courtId, court.name, court.location, admin.username, admin.number, image_path)
         )
     context = {"courtDetails": courtDetails}
     return render(request, "home.html", context)
@@ -24,11 +26,16 @@ def home_view(request):
 
 def courtSectionView(request, courtId):
     courtSections = CourtSection.objects.filter(courtId=courtId)
-
+    for courtSection in courtSections:
+        image_path = f"frontend/courtSectionsImages/{courtSection.courtSectionId}.jpeg"
+        courtSection.image_path = image_path  # Add image_path as an attribute to each object
+    
     context = {
         "courtSections": courtSections,
     }
     return render(request, "court_section.html", context)
+
+
 
 from django.views.decorators.http import require_http_methods
 

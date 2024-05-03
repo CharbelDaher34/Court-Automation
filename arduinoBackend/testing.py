@@ -38,7 +38,7 @@ def display_image_with_title(image_path, title):
 
 # Load the image
 image_paths = ["./AiFiles/testingPhotos/a.jpeg","./AiFiles/testingPhotos/b.jpeg","./AiFiles/testingPhotos/c.jpeg"]
-
+image_paths=["./AiFiles/images/andrew/andrew.jpg"]
 for image_path in image_paths:
     # Replace with the path to your image
     image = Image.open(image_path)
@@ -52,7 +52,7 @@ for image_path in image_paths:
     # Prepare JSON payload
     payload = {
                'image': image_list, 
-               'identity':"daher"
+               'identity':"andrew"
             }
     json_payload = json.dumps(payload)
     
