@@ -1,45 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reserve Court Section</title>
-</head>
-<body>
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif; /* Ensures text is in Arial, if not available then sans-serif */
+      text-align: center; /* Centers all the text inside the body */
+      font-size: 18px; /* Increases the font size */
+    }
+    
+    h1,
+    h2,
+    h3 {
+      margin-top: 20px; /* Adds space above each heading */
+    }
+    
+    ul {
+      list-style-type: none; /* Removes bullet points from list */
+      padding: 0; /* Removes padding */
+    }
+    
+    li {
+      margin-bottom: 10px; /* Adds space below each list item */
+    }
+    
+    form {
+      margin-top: 20px; /* Adds space above the form */
+    }
+    
+    button {
+      font-size: 16px; /* Larger font size for better readability */
+      padding: 10px 20px; /* Padding around the text in the button */
+      cursor: pointer; /* Shows a pointer cursor on hover */
+    }
+  </style>
+
+  <body>
     <h1>Reserve Court Section</h1>
-        <h2>Court Section: {{ court_section.name }}</h2>
+    <h2>Court Section: {{ court_section.name }}</h2>
     <h2>Date: {{ date }}</h2>
 
     <h3>Available Time Slots:</h3>
     <ul>
-        {% for slot in available_slots %}
-            <li>{{ slot.0 }} - {{ slot.1 }}</li>
-        {% endfor %}
+      {% for slot in available_slots %}
+        <li>{{ slot }}</li>
+      {% endfor %}
     </ul>
 
     <h3>Reserve Time Slot:</h3>
-    
-    <form action="{% url 'reserve_court_section' court_section.courtSectionId date %}" method="post">
-        {% csrf_token %}   
-        {{ form.as_p }}
-        <button type="submit">Reserve</button>
+
+    <form method="post" id="reserveForm">
+      {% csrf_token %}
+      <input type="hidden" name="available_slots" value="{{ available_slots }}" />
+      <p>
+        <label for="startTime">Start Time:</label>
+        <input type="time" name="start_time" required="" id="startTime" />
+      </p>
+      <p>
+        <label for="endTime">End Time:</label>
+        <input type="time" name="end_time" required="" id="endTime" />
+      </p>
+      <button type="submit" id="reserveButton" onclick="checkAvailability()">Reserve</button>
     </form>
+  </body>
+
+  <script>
+    function checkAvailability() {
+      startTime = document.getElementById('startTime').value
+      endTime = document.getElementById('endTime').value
+      if (available_slots) {
+        for (let slot of available_slots) {
+          alert(slot)
+        }
+      } else {
+        alert('No available time slots!')
+      }
     
-</body>
+    }
+  </script>
 </html>
 
-
-
-{% comment %} <form action="{% url 'reserve_court_section' court_section.courtSectionId date %}" method="post">
-        {% csrf_token %}
-        <label for="start_time">Start Time:</label>
-        <input type="time" id="start_time" name="start_time" required>
-        <label for="end_time">End Time:</label>
-        <input type="time" id="end_time" name="end_time" required>
-        <button type="submit">Reserve</button>
-
-        <input type="hidden" name="court_section_id" value="{{ court_section.courtSectionId }}">
-        <input type="hidden" name="available_slots" value="{{ available_slots }}">
-      
-
-    </form> {% endcomment %}
+{% comment %} <form action="{% url 'reserve_court_section' court_section.courtSectionId date %}" method="post" id="reserveForm">
+  {% endcomment %}
+</form>

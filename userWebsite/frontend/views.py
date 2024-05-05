@@ -5,7 +5,6 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from datetime import timedelta, datetime
 from backend.models import CourtSection, Reservation, Court, Admin
 import json
-from frontend.forms import ReserveCourtSectionForm
 from datetime import date
 import os
 from PIL import Image
@@ -74,7 +73,6 @@ def available_times(request):
         for reservation in reservations:
             reservation_tuple = (reservation.startTime, reservation.endTime)
             reservations_data.append(reservation_tuple)
-        form = ReserveCourtSectionForm([(openTime, closeTime)])  # Create an instance of the form
     
         # Initialize list to store available time slots
         available_slots = []
@@ -83,7 +81,6 @@ def available_times(request):
                 "court_section": court_section,
                 "date": dateObj,
                 "available_slots": [(openTime, closeTime)],
-                "form": form,
             }
     
             return render(request, "reservations.html", context)
@@ -107,20 +104,23 @@ def available_times(request):
             # If there are no reservations, consider the entire time as available
             available_slots.append((openTime, closeTime))
     
-        form = ReserveCourtSectionForm(available_slots)  # Create an instance of the form
-    
+        time_strings = []
+        for time_tuple in available_slots:
+            # for start,end in time_tuple:
+                startStr = f"{time_tuple[0].hour}:{time_tuple[0].minute}"
+                endStr = f"{time_tuple[1].hour}:{time_tuple[1].minute}"
+
+                time_strings.append((startStr,endStr))
         context = {
             "court_section": court_section,
             "date": dateObj,
-            "available_slots": available_slots,
-            "form": form,  # Include the form in the context
+            "available_slots": time_strings,
         }
     
         return render(request, "reservations.html", context)
     if request.method == "GET":
         print(request)
     return request
-
 
 def reserve_court_section(request, courtSectionId, date):
     context = {}
@@ -133,31 +133,14 @@ def reserve_court_section(request, courtSectionId, date):
         end_time = request.POST.get("end_time")
         available_slots = request.POST.get("available_slots")
 
-        valid_time = False
-        for slot in available_slots:
-            if start_time >= slot[0].strftime("%H:%M:%S") and end_time <= slot[
-                1
-            ].strftime("%H:%M:%S"):
-                valid_time = True
-                break
+        context = {
+            "court_section": courtSection,
+            "date": date,
+            "available_slots": available_slots,
+        }
+        return render(request, "reservations.html", context)
 
-        if not valid_time:
-            context["error_message"] = "Selected time slot is not available."
-            form = ReserveCourtSectionForm()  # Create an instance of the form
 
-            context = {
-                "court_section": courtSection,
-                "date": date,
-                "available_slots": available_slots,
-                "form": form,
-            }
-
-            return render(request, "reservations.html", context)
-
-        # Perform validation of start_time and end_time if necessary
-
-        # Assuming court_section and date are available in the context
-        # Create a new Reservation object and save it
         courtSection = CourtSection.objects.get(courtSectionId=courtSectionId)
         reservation = Reservation.objects.create(
             court_section=courtSection,
