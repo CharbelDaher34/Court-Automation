@@ -40,7 +40,7 @@
 
   <body>
     <h1>Reserve Court Section</h1>
-    <h2>Court Section: {{ court_section.name }}</h2>
+    <h2>Court Section: {{ court_section.sectionName }}</h2>
     <h2>Date: {{ date }}</h2>
 
     <h3>Available Time Slots:</h3>
@@ -52,9 +52,8 @@
 
     <h3>Reserve Time Slot:</h3>
 
-    <form method="post" id="reserveForm">
-      {% csrf_token %}
-      <input type="hidden" name="available_slots" value="{{ available_slots }}" />
+    <div id="reserveForm">
+      <input type="hidden" name="available_slots" value="{{ available_slots }}" id="slots" />
       <p>
         <label for="startTime">Start Time:</label>
         <input type="time" name="start_time" required="" id="startTime" />
@@ -63,26 +62,26 @@
         <label for="endTime">End Time:</label>
         <input type="time" name="end_time" required="" id="endTime" />
       </p>
-      <button type="submit" id="reserveButton" onclick="checkAvailability()">Reserve</button>
-    </form>
+      <button id="reserveButton" onclick="checkAvailability()">Reserve</button>
+    </div>
+    
   </body>
 
   <script>
+
+
+    var available_slots = JSON.parse(document.querySelector('input[name="available_slots"]').value);
     function checkAvailability() {
-      startTime = document.getElementById('startTime').value
-      endTime = document.getElementById('endTime').value
-      if (available_slots) {
-        for (let slot of available_slots) {
-          alert(slot)
-        }
-      } else {
-        alert('No available time slots!')
-      }
-    
+      var startTime = document.getElementById('startTime').value;
+      var endTime = document.getElementById('endTime').value;
+      available_slots=document.getElementById('slots').value
+      alert(available_slots)
+
+     
     }
   </script>
 </html>
 
 {% comment %} <form action="{% url 'reserve_court_section' court_section.courtSectionId date %}" method="post" id="reserveForm">
   {% endcomment %}
-</form>
+      <!-- {% csrf_token %} -->

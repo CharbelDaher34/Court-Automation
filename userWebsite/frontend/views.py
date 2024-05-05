@@ -8,7 +8,10 @@ import json
 from datetime import date
 import os
 from PIL import Image
+from django.shortcuts import redirect
+import logging
 
+logger = logging.getLogger(__name__)
 
 def home_view(request):
     courtDetails = []
@@ -40,6 +43,7 @@ from django.views.decorators.http import require_http_methods
 
 @require_http_methods(["POST"])
 def available_times(request):
+    logger.info(f"Received {request.method} request from {request.META['REMOTE_ADDR']}")
     if request.method == "POST":
         context = {}
         courtSectionId = request.POST.get("courtSectionId")
@@ -82,8 +86,10 @@ def available_times(request):
                 "date": dateObj,
                 "available_slots": [(openTime, closeTime)],
             }
-    
-            return render(request, "reservations.html", context)
+            request.session['reservation_context'] = context
+            return redirect('show_reservations')
+        
+        
     
         reservations_data.sort(key=lambda x: x[0])  # Assuming index 0 represents start time
     
@@ -111,10 +117,11 @@ def available_times(request):
                 endStr = f"{time_tuple[1].hour}:{time_tuple[1].minute}"
 
                 time_strings.append((startStr,endStr))
+        available_slots= time_strings
         context = {
             "court_section": court_section,
             "date": dateObj,
-            "available_slots": time_strings,
+            "available_slots": available_slots,
         }
     
         return render(request, "reservations.html", context)
@@ -155,3 +162,7 @@ def reserve_court_section(request, courtSectionId, date):
     # If the request method is GET or if form submission fails, render the same page with the form
     return render(request, "home.html", context)
 
+
+def show_reservations(request):
+    context = request.session.get('reservation_context', {})
+    return render(request, 'reservations.html', context)
