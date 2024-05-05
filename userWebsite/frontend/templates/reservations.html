@@ -111,8 +111,7 @@
         <option value="F">Female</option>
       </select>
       <br /><br />
-
-      <input type="submit" value="Submit" />
+<button onclick="submitForm()"> submit</button>
     </div>
   </body>
 
@@ -125,6 +124,10 @@
     function showForm() {
       alert("tomato");
       document.getElementById("userCreationForm").style.display = "block";
+    }
+    function submitForm() {
+      alert("tomato");
+      document.getElementById("userCreationForm").style.display = "none";
     }
 
     function checkAvailability() {
