@@ -39,9 +39,11 @@ def courtSectionView(request, courtId):
 
 
 
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods,require_POST
+from django.views.decorators.csrf import csrf_exempt
 
-@require_http_methods(["POST"])
+@csrf_exempt
+@require_POST
 def available_times(request):
     logger.info(f"Received {request.method} request from {request.META['REMOTE_ADDR']}")
     if request.method == "POST":
@@ -129,6 +131,8 @@ def available_times(request):
         print(request)
     return request
 
+@csrf_exempt
+@require_POST
 def reserve_court_section(request, courtSectionId, date):
     context = {}
     if request.method == "POST":
