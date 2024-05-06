@@ -11,26 +11,26 @@
       text-align: center; /* Centers all the text inside the body */
       font-size: 18px; /* Increases the font size */
     }
-
+    
     h1,
     h2,
     h3 {
       margin-top: 20px; /* Adds space above each heading */
     }
-
+    
     ul {
       list-style-type: none; /* Removes bullet points from list */
       padding: 0; /* Removes padding */
     }
-
+    
     li {
       margin-bottom: 10px; /* Adds space below each list item */
     }
-
+    
     form {
       margin-top: 20px; /* Adds space above the form */
     }
-
+    
     button {
       font-size: 16px; /* Larger font size for better readability */
       padding: 10px 20px; /* Padding around the text in the button */
@@ -46,19 +46,14 @@
     <h3>Available Time Slots:</h3>
     <ul>
       {% for slot in available_slots %}
-      <li>{{ slot }}</li>
+        <li>{{ slot }}</li>
       {% endfor %}
     </ul>
 
     <h3>Reserve Time Slot:</h3>
 
     <div id="reserveForm">
-      <input
-        type="hidden"
-        name="available_slots"
-        value="{{ available_slots }}"
-        id="slots"
-      />
+      <input type="hidden" name="available_slots" value="{{ available_slots }}" id="slots" />
       <p>
         <label for="startTime">Start Time:</label>
         <input type="time" name="start_time" required="" id="startTime" />
@@ -71,13 +66,8 @@
     </div>
     <button id="show" onclick="showForm()">showFOrm</button>
 
-    <div id="userCreationForm">
-      <input
-        type="hidden"
-        id="password"
-        name="password"
-        value="your_default_password"
-      />
+    <form id="userCreationForm">
+      <input type="hidden" id="password" name="password" value="your_default_password" />
 
       <label for="firstName">First Name:</label><br />
       <input type="text" id="firstName" name="firstName" /><br /><br />
@@ -89,12 +79,7 @@
       <input type="email" id="email" name="email" /><br /><br />
 
       <label for="number">Phone Number:</label><br />
-      <input
-        type="tel"
-        id="number"
-        name="number"
-        placeholder="Format: 123-456-7890"
-      /><br /><br />
+      <input type="tel" id="number" name="number" placeholder="Format: 123-456-7890" /><br /><br />
 
       <label for="country">Country:</label><br />
       <input type="text" id="country" name="country" /><br /><br />
@@ -111,75 +96,73 @@
         <option value="F">Female</option>
       </select>
       <br /><br />
-<button onclick="submitForm()"> submit</button>
-    </div>
+      <button onclick="submitForm()">submit</button>
+    </form>
   </body>
 
   <script>
     function inittt() {
-      alert("hi");
-      document.getElementById("userCreationForm").style.display = "none";
+      alert('hi')
+      document.getElementById('userCreationForm').style.display = 'none'
     }
-
+    
     function showForm() {
-      alert("tomato");
-      document.getElementById("userCreationForm").style.display = "block";
+      alert('tomato')
+      document.getElementById('userCreationForm').style.display = 'block'
     }
     function submitForm() {
-      alert("tomato");
-      document.getElementById("userCreationForm").style.display = "none";
+      alert('tomato')
+      document.getElementById('userCreationForm').style.display = 'none'
     }
-
+    
     function checkAvailability() {
-      var startTime = document.getElementById("startTime").value;
-      var endTime = document.getElementById("endTime").value;
-      let available_slots = document.getElementById("slots").value;
-
+      var startTime = document.getElementById('startTime').value
+      var endTime = document.getElementById('endTime').value
+      let available_slots = document.getElementById('slots').value
+    
       // Convert startTime and endTime to integers
-      let [hours, minutes] = startTime.split(":");
-      let startHour = parseInt(hours);
-      let startMin = parseInt(minutes);
-
-      [hours, minutes] = endTime.split(":");
-      let endHour = parseInt(hours);
-      let endMin = parseInt(minutes);
-
+      let [hours, minutes] = startTime.split(':')
+      let startHour = parseInt(hours)
+      let startMin = parseInt(minutes)
+    
+      ;[hours, minutes] = endTime.split(':')
+      let endHour = parseInt(hours)
+      let endMin = parseInt(minutes)
+    
       // Convert available_slots to a list of tuples of integers
-      let stringData = available_slots.replace(/\[|\]|\(/g, "");
-      let dataArray = stringData.replace(/'/g, "").split("),");
-      dataArray = dataArray.map((item) => item.trim());
-      parts = dataArray[0].split(",").map((part) => part.trim());
+      let stringData = available_slots.replace(/\[|\]|\(/g, '')
+      let dataArray = stringData.replace(/'/g, '').split('),')
+      dataArray = dataArray.map((item) => item.trim())
+      parts = dataArray[0].split(',').map((part) => part.trim())
       available_slots = parts.map((part) => {
-        let [hour, minute] = part.split(":").map((num) => parseInt(num));
-        return [hour, minute];
-      });
-
-      alert(startTime + " " + endTime);
-      let isAvailable = false; // Initialize availability flag to false
-
+        let [hour, minute] = part.split(':').map((num) => parseInt(num))
+        return [hour, minute]
+      })
+    
+      alert(startTime + ' ' + endTime)
+      let isAvailable = false // Initialize availability flag to false
+    
       for (let i = 0; i < available_slots.length; i++) {
-        let slot = available_slots[i];
-        let slotStartHour = slot[0][0];
-        let slotStartMin = slot[0][1];
-        let slotEndHour = slot[1][0];
-        let slotEndMin = slot[1][1];
-
+        let slot = available_slots[i]
+        let slotStartHour = slot[0][0]
+        let slotStartMin = slot[0][1]
+        let slotEndHour = slot[1][0]
+        let slotEndMin = slot[1][1]
+    
         // Check if start time falls within the current available slot
         if (
-          (startHour > slotStartHour ||
-            (startHour === slotStartHour && startMin >= slotStartMin)) &&
+          (startHour > slotStartHour || (startHour === slotStartHour && startMin >= slotStartMin)) &&
           // Check if end time also falls within the current available slot
-          (endHour < slotEndHour ||
-            (endHour === slotEndHour && endMin <= slotEndMin))
+          (endHour < slotEndHour || (endHour === slotEndHour && endMin <= slotEndMin))
         ) {
-          isAvailable = true; // Slot found, set flag to true
-          break; // Exit the loop once a slot is found
+          isAvailable = true // Slot found, set flag to true
+          break // Exit the loop once a slot is found
         } else {
           // No match, continue checking other slots
         }
       }
-
-      alert("Available: " + isAvailable);
+    
+      alert('Available: ' + isAvailable)
     }
   </script>
 </html>
