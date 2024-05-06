@@ -35,11 +35,67 @@
       font-size: 16px; /* Larger font size for better readability */
       padding: 10px 20px; /* Padding around the text in the button */
       cursor: pointer; /* Shows a pointer cursor on hover */
+      width: 200px;
+      height: 30px;
+      margin: 5px;
+    }
+    
+    /* Overall form styling */
+    #reserveForm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 300px;
+      margin: 0 auto; /* Center the form horizontally */
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: sans-serif;
+    }
+    
+    /* Labels and inputs */
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    input[type='email'],
+    input[type='password'],
+    input[type='time'] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 16px;
+    }
+    
+    /* Password toggle eye icon */
+    #togglePassword {
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    
+    /* Button */
+    #reserveButton {
+      background-color: #4caf50; /* Green color */
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    
+    /* Button hover effect */
+    #reserveButton:hover {
+      background-color: #45a049; /* Slightly darker green on hover */
     }
   </style>
 
-  <body onload="inittt()">
-    <h1>Reserve Court Section</h1>
+  <body onload="init()">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" id="csrf_token" />
+
+        <h1>Reserve Court Section</h1>
     <h2>Court Section: {{ court_section.sectionName }}</h2>
     <h2>Date: {{ date }}</h2>
 
@@ -53,6 +109,11 @@
     <h3>Reserve Time Slot:</h3>
 
     <div id="reserveForm">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" /><br /><br />
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" />
+
       <input type="hidden" name="available_slots" value="{{ available_slots }}" id="slots" />
       <p>
         <label for="startTime">Start Time:</label>
@@ -64,11 +125,10 @@
       </p>
       <button id="reserveButton" onclick="checkAvailability()">Reserve</button>
     </div>
-    <button id="show" onclick="showForm()">showFOrm</button>
+
+    <button id="show" onclick="showForm()">create user</button>
 
     <form id="userCreationForm">
-      <input type="hidden" id="password" name="password" value="your_default_password" />
-
       <label for="firstName">First Name:</label><br />
       <input type="text" id="firstName" name="firstName" /><br /><br />
 
@@ -76,7 +136,10 @@
       <input type="text" id="lastName" name="lastName" /><br /><br />
 
       <label for="email">Email:</label><br />
-      <input type="email" id="email" name="email" /><br /><br />
+      <input type="email" id="userCreationemail" name="email" /><br /><br />
+
+      <label for="password">Password:</label>
+      <input type="password" id="userCreationPassword" name="password" />
 
       <label for="number">Phone Number:</label><br />
       <input type="tel" id="number" name="number" placeholder="Format: 123-456-7890" /><br /><br />
@@ -98,22 +161,85 @@
       <br /><br />
       <button onclick="submitForm()">submit</button>
     </form>
+    <br /><br /><br />
+
+    <footer>
+      <p></p>
+    </footer>
   </body>
 
   <script>
-    function inittt() {
-      alert('hi')
-      document.getElementById('userCreationForm').style.display = 'none'
+
+    function init() {
+      alert("toa");
+      document.getElementById('userCreationForm').style.display = 'none';
     }
     
     function showForm() {
-      alert('tomato')
       document.getElementById('userCreationForm').style.display = 'block'
     }
+
     function submitForm() {
-      alert('tomato')
-      document.getElementById('userCreationForm').style.display = 'none'
-    }
+      // Get references to all input elements
+      alert("form is");
+      const firstNameInput = document.getElementById('firstName');
+      const lastNameInput = document.getElementById('lastName');
+      const emailInput = document.getElementById('userCreationemail'); // Updated ID
+      const passwordInput = document.getElementById('userCreationPassword'); // New ID
+      const numberInput = document.getElementById('number');
+      const countryInput = document.getElementById('country');
+      const addressInput = document.getElementById('address');
+      const dobInput = document.getElementById('date_of_birth');
+      const sexSelect = document.getElementById('sex');
+    
+      // Extract values from each input
+      const firstName = firstNameInput.value;
+      const lastName = lastNameInput.value;
+      const email = emailInput.value;
+      const password = passwordInput.value; // New variable for password
+      const phoneNumber = numberInput.value;
+      const country = countryInput.value;
+      const address = addressInput.value;
+      const dateOfBirth = dobInput.value;
+      const sex = sexSelect.value;
+    
+      // Prepare data object for sending the request
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        password, // Include password in the data object
+        phoneNumber,
+        country,
+        address,
+        dateOfBirth,
+        sex,
+      };
+
+
+      fetch('http://localhost:8000/backend/create_user/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("User created successfully!");
+        } else {
+            throw new Error('Failed to create user');
+        }
+    })
+    .catch(error => {
+        alert("Error creating user: " + error.message);
+    });
+    alert("finish");
+
+}
+    
+
     
     function checkAvailability() {
       var startTime = document.getElementById('startTime').value
@@ -164,5 +290,21 @@
     
       alert('Available: ' + isAvailable)
     }
+
+
+    function updateDateTime() {
+      const now = new Date();
+      const dateTimeString = now.toLocaleString();
+      const footerElement = document.querySelector('footer p');
+      footerElement.textContent = `${dateTimeString}`;
+  }
+
+  setInterval(updateDateTime, 1000); // Update every second
+
+
+ 
+  
+
+
   </script>
 </html>

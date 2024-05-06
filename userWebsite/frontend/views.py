@@ -52,7 +52,7 @@ from django.views.decorators.http import require_http_methods, require_POST, req
 from django.views.decorators.csrf import csrf_exempt
 
 
-@csrf_exempt
+# @csrf_exempt
 @require_GET
 def available_times(request):
     logger.info(f"Received {request.method} request from {request.META['REMOTE_ADDR']}")
