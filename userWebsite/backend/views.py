@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+import json
 # Create your views here.
 from .seeder import MySeeder
 from django.shortcuts import render, redirect
@@ -22,15 +22,17 @@ def seeder(request):
 @csrf_exempt
 def create_user(request):
     if request.method == "POST":
-        first_name = request.POST.get("firstName")
-        last_name = request.POST.get("lastName")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        phone_number = request.POST.get("number")
-        country = request.POST.get("country")
-        address = request.POST.get("address")
-        date_of_birth = request.POST.get("date_of_birth")
-        sex = request.POST.get("sex")
+        data = json.loads(request.body)
+
+        first_name = data.get("firstName")
+        last_name = data.get("lastName")
+        email = data.get("email")
+        password = data.get("password")
+        phone_number = data.get("number")
+        country = data.get("country")
+        address = data.get("address")
+        date_of_birth = data.get("date_of_birth")
+        sex = data.get("sex")
 
         try:
             client = Client.objects.create(
@@ -44,6 +46,7 @@ def create_user(request):
                 date_of_birth=date_of_birth,
                 sex=sex,
             )
+            client.save();
           
             messages.success(request, "User created successfully!")
             return HttpResponse("User created successfully", status=201)  # 201 Created status

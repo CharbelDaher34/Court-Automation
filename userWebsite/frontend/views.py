@@ -3,7 +3,7 @@ import pretty_errors
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseBadRequest
 from datetime import timedelta, datetime
-from backend.models import CourtSection, Reservation, Court, Admin
+from backend.models import CourtSection, Reservation, Court, Admin, Client
 import json
 from datetime import date
 import os
@@ -229,10 +229,11 @@ def available_times(request):
 #     return HttpResponseBadRequest("Invalid request")
 
 from django.contrib.auth.hashers import make_password,check_password
+from django.http import JsonResponse
 
 @csrf_exempt
 @require_POST
-def reserve_court_section(request, courtSectionId, date):
+def reserve_court_section(request, courtSectionId):
     context = {}
     if request.method == "POST":
         # Parse JSON data from the request body
@@ -246,16 +247,17 @@ def reserve_court_section(request, courtSectionId, date):
         date = data.get("date")
 
 
+        strr=make_password(password)
+        print(str)
 
         try:
             client = Client.objects.get(email=email)
+            passss=client.password
         except Client.DoesNotExist:
             return JsonResponse({'error': 'Client not found'}, status=404)
-        # Check if the provided password matches the hashed password
         if not check_password(password, client.password):
             return JsonResponse({'error': 'Incorrect password'}, status=401)
-        # If everything is correct, proceed with your logic here
-        # For example, reserve the court section
+
 
 
         # courtSectionId = request.POST.get('court_section_id')
