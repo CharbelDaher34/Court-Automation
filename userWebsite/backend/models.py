@@ -75,10 +75,10 @@ class Client(models.Model):
     def __str__(self):
         return self.identity()
     
-    def save(self, *args, **kwargs):
-        # Hash the password before saving
-        self.password = make_password(self.password)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Hash the password before saving
+    #     self.password = make_password(self.password)
+    #     super().save(*args, **kwargs)
     
     
 

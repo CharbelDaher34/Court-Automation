@@ -252,10 +252,10 @@ def reserve_court_section(request, courtSectionId):
 
         try:
             client = Client.objects.get(email=email)
-            passss=client.password
+            
         except Client.DoesNotExist:
             return JsonResponse({'error': 'Client not found'}, status=404)
-        if not check_password(password, client.password):
+        if password!=client.password:
             return JsonResponse({'error': 'Incorrect password'}, status=401)
 
 
@@ -264,7 +264,7 @@ def reserve_court_section(request, courtSectionId):
         # available_slots = request.POST.get('available_slots')  # This will be a string representation of the list
         courtSection = CourtSection.objects.get(courtSectionId=courtSectionId)
         reservation = Reservation.objects.create(
-            court_section=courtSection,
+            courtsectionID=courtSection,
             date=date,
             startTime=startTime,
             endTime=endTime,
