@@ -159,7 +159,7 @@
         <option value="F">Female</option>
       </select>
       <br /><br />
-      <button onclick="submitForm()">submit</button>
+      <button onclick="submitUserCreationForm()">submit</button>
     </form>
     <br /><br /><br />
 
@@ -171,15 +171,19 @@
   <script>
 
     function init() {
-      alert("toa");
       document.getElementById('userCreationForm').style.display = 'none';
     }
     
     function showForm() {
-      document.getElementById('userCreationForm').style.display = 'block'
+      var userCreationForm = document.getElementById('userCreationForm');
+      if (userCreationForm.style.display === 'block') {
+        userCreationForm.style.display = 'none'; // Hide the form
+      } else {
+        userCreationForm.style.display = 'block'; // Show the form
+      }
     }
 
-    function submitForm() {
+    function submitUserCreationForm() {
       // Get references to all input elements
       alert("form is");
       const firstNameInput = document.getElementById('firstName');
@@ -240,18 +244,29 @@
 }
     
 
-    
+function groupPairs(array) {
+  const pairs = [];
+  for (let i = 0; i < array.length; i += 2) {
+    if (i + 1 < array.length) {
+      pairs.push([array[i], array[i + 1]]);
+    } else {
+      pairs.push([array[i]]);
+    }
+  }
+  return pairs;
+}
+
+
     function checkAvailability() {
       var startTime = document.getElementById('startTime').value
       var endTime = document.getElementById('endTime').value
       let available_slots = document.getElementById('slots').value
-    
       // Convert startTime and endTime to integers
       let [hours, minutes] = startTime.split(':')
       let startHour = parseInt(hours)
       let startMin = parseInt(minutes)
     
-      ;[hours, minutes] = endTime.split(':')
+      [hours, minutes] = endTime.split(':')
       let endHour = parseInt(hours)
       let endMin = parseInt(minutes)
     
@@ -264,12 +279,14 @@
         let [hour, minute] = part.split(':').map((num) => parseInt(num))
         return [hour, minute]
       })
-    
-      alert(startTime + ' ' + endTime)
+
+      available_slots = groupPairs(available_slots);
+      
       let isAvailable = false // Initialize availability flag to false
     
-      for (let i = 0; i < available_slots.length; i++) {
+      for (let i = 0; i <= available_slots.length; i=i+1) {
         let slot = available_slots[i]
+
         let slotStartHour = slot[0][0]
         let slotStartMin = slot[0][1]
         let slotEndHour = slot[1][0]
@@ -286,9 +303,52 @@
         } else {
           // No match, continue checking other slots
         }
-      }
+      }    
+      alert("available:"+isAvailable)
+
     
-      alert('Available: ' + isAvailable)
+
+      var courtSectionId = "{{ court_section.courtSectionId }}";
+      var date = "{{ date }}";
+
+      alert(courtSectionId);
+
+
+      var email = document.getElementById('email').value;
+      var password = document.getElementById('password').value;
+
+      var formData = new FormData();
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('courtSectionId', courtSectionId);
+      formData.append('startTime', startTime);
+      formData.append('endTime', endTime);
+      formData.append('date', date);
+
+      fetch('http://localhost:8000/frontend/reserve_court_section/'+ courtSectionId + '/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("User created successfully!");
+        } else {
+            throw new Error('Failed to create user');
+        }
+    })
+    .catch(error => {
+        alert("Error creating user: " + error.message);
+    });
+
+
+
+
+
+
     }
 
 

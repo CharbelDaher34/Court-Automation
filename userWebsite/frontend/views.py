@@ -62,7 +62,7 @@ def available_times(request):
 
     try:
         courtSectionId = request.GET.get("courtSectionId")
-        selected_date = request.GET.get("date")        
+        selected_date = request.GET.get("date")
         courtSectionId = int(courtSectionId)
         year, month, day = map(int, selected_date.split("-"))
         dateObj = date(year, month, day)
@@ -80,7 +80,7 @@ def available_times(request):
 
     reservations_data = sorted(
         [(reservation.startTime, reservation.endTime) for reservation in reservations],
-        key=lambda x: x[0]
+        key=lambda x: x[0],
     )
 
     available_slots = []
@@ -96,7 +96,9 @@ def available_times(request):
 
         for i in range(len(reservations_data) - 1):
             if reservations_data[i][1] < reservations_data[i + 1][0]:
-                available_slots.append((reservations_data[i][1], reservations_data[i + 1][0]))
+                available_slots.append(
+                    (reservations_data[i][1], reservations_data[i + 1][0])
+                )
 
         available_slots.append(
             (reservations_data[-1][1], court_section.closeTime)
@@ -105,20 +107,23 @@ def available_times(request):
         )
 
     available_slots = [
-        (f"{time_tuple[0].hour}:{time_tuple[0].minute}", f"{time_tuple[1].hour}:{time_tuple[1].minute}")
+        (
+            f"{time_tuple[0].hour}:{time_tuple[0].minute}",
+            f"{time_tuple[1].hour}:{time_tuple[1].minute}",
+        )
         for time_tuple in available_slots
     ]
 
     context = {
-    "court_section": {
-        "courtSectionId": court_section.courtSectionId,
-        "courtId": court_section.courtId.courtId,
-        "sectionName": court_section.sectionName,
-        "sectionType": court_section.sectionType,
-        "fansCapacity": court_section.fansCapacity,
-        "openTime": court_section.openTime.strftime("%H:%M:%S"), 
-        "closeTime": court_section.closeTime.strftime("%H:%M:%S")
-    },        
+        "court_section": {
+            "courtSectionId": court_section.courtSectionId,
+            "courtId": court_section.courtId.courtId,
+            "sectionName": court_section.sectionName,
+            "sectionType": court_section.sectionType,
+            "fansCapacity": court_section.fansCapacity,
+            "openTime": court_section.openTime.strftime("%H:%M:%S"),
+            "closeTime": court_section.closeTime.strftime("%H:%M:%S"),
+        },
         "date": dateObj.strftime("%Y-%m-%d"),  # Convert date to string
         "available_slots": available_slots,
     }
@@ -223,35 +228,47 @@ def available_times(request):
 #         return render(request, "reservations.html", context)
 #     return HttpResponseBadRequest("Invalid request")
 
+from django.contrib.auth.hashers import make_password,check_password
 
 @csrf_exempt
 @require_POST
 def reserve_court_section(request, courtSectionId, date):
     context = {}
     if request.method == "POST":
+        # Parse JSON data from the request body
+        data = json.loads(request.body)
+        # Access individual fields from the parsed JSON data
+        email = data.get("email")
+        password = data.get("password")
+        courtSectionId = data.get("courtSectionId")
+        startTime = data.get("startTime")
+        endTime = data.get("endTime")
+        date = data.get("date")
+
+
+
+        try:
+            client = Client.objects.get(email=email)
+        except Client.DoesNotExist:
+            return JsonResponse({'error': 'Client not found'}, status=404)
+        # Check if the provided password matches the hashed password
+        if not check_password(password, client.password):
+            return JsonResponse({'error': 'Incorrect password'}, status=401)
+        # If everything is correct, proceed with your logic here
+        # For example, reserve the court section
+
 
         # courtSectionId = request.POST.get('court_section_id')
         # available_slots = request.POST.get('available_slots')  # This will be a string representation of the list
         courtSection = CourtSection.objects.get(courtSectionId=courtSectionId)
-        start_time = request.POST.get("start_time")
-        end_time = request.POST.get("end_time")
-        available_slots = request.POST.get("available_slots")
-
-        context = {
-            "court_section": courtSection,
-            "date": date,
-            "available_slots": available_slots,
-        }
-        return render(request, "reservations.html", context)
-
-        courtSection = CourtSection.objects.get(courtSectionId=courtSectionId)
         reservation = Reservation.objects.create(
             court_section=courtSection,
             date=date,
-            startTime=start_time,
-            endTime=end_time,
+            startTime=startTime,
+            endTime=endTime,
         )
-
+        reservation.save()
+        context = {}
         return render(
             request, "home.html", context
         )  # Change 'success_page' to your success page URL name

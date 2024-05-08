@@ -91,6 +91,20 @@ class Reservation(models.Model):
     startTime = models.TimeField()
     endTime = models.TimeField()
     token = models.CharField(max_length=100,null=True)
+    
+    
+    
+    
+    
+class Review(models.Model):
+    reservationId = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    rating = models.IntegerField()  # You can define the rating system as per your requirements
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review for Reservation ID {self.reservationId}"
+
 
 
 

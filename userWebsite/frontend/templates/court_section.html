@@ -61,6 +61,8 @@
     /* Form Styles */
     #courtSectionForm {
       margin-top: 20px;
+      text-align: center;
+
     }
 
     #courtSectionForm label {
@@ -138,43 +140,36 @@
       <button type="submit" class="btn btn-primary">Book Now</button>
     </form>
 
-    
     <script>
-      
-      
+      function enlargeImage(img) {
+        // Enlarge the image and center it
+        img.style.width = "60%";
+        img.style.height = "auto";
+        img.style.position = "fixed";
+        img.style.top = "50%";
+        img.style.left = "50%";
+        img.style.transform = "translate(-50%, -50%)";
+        img.style.zIndex = "999"; // Ensure image is on top of other elements
 
+        // Blur all content outside the enlarged photo
+        document.body.style.filter = "blur(5px)";
 
+        // Add event listener to close the enlarged image
+        img.addEventListener("click", function () {
+          // Restore the image to its original size and position
+          img.style.width = "100px";
+          img.style.height = "100px";
+          img.style.position = "static";
+          img.style.transform = "none";
+          img.style.filter = "none";
 
-            function enlargeImage(img) {
-              // Enlarge the image and center it
-              img.style.width = '60%';
-              img.style.height = 'auto';
-              img.style.position = 'fixed';
-              img.style.top = '50%';
-              img.style.left = '50%';
-              img.style.transform = 'translate(-50%, -50%)';
-              img.style.zIndex = '999'; // Ensure image is on top of other elements
+          // Remove blur effect
+          document.body.style.filter = "none";
 
-              // Blur all content outside the enlarged photo
-              document.body.style.filter = 'blur(5px)';
-
-              // Add event listener to close the enlarged image
-              img.addEventListener('click', function () {
-                  // Restore the image to its original size and position
-                  img.style.width = '100px';
-                  img.style.height = '100px';
-                  img.style.position = 'static';
-                  img.style.transform = 'none';
-                  img.style.filter = 'none';
-
-                  // Remove blur effect
-                  document.body.style.filter = 'none';
-
-                  // Remove the click event listener
-                  img.removeEventListener('click', arguments.callee);
-
-              });
-          }
+          // Remove the click event listener
+          img.removeEventListener("click", arguments.callee);
+        });
+      }
     </script>
   </body>
 </html>
