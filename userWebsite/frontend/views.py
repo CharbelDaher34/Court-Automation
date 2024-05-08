@@ -271,6 +271,8 @@ def reserve_court_section(request, courtSectionId):
         )
         reservation.save()
         context = {}
+        return JsonResponse({'message': 'reservation successful'}, status=200)
+
         return render(
             request, "home.html", context
         )  # Change 'success_page' to your success page URL name

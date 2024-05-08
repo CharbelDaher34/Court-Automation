@@ -332,6 +332,15 @@ alert(requestData)
     })
     .then(response => {
       if (response.ok) {
+
+        fetch('http://localhost:8000/frontend/home/', {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json'
+  
+          },
+      });
+
         alert("Reservation successfully!");
     } else if (response.status === 404) {
         alert("Client not found");
