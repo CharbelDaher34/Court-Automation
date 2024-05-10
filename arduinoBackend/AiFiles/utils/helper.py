@@ -1,4 +1,3 @@
-#tf.keras.backend.set_image_data_format('channels_last')
 from PIL import Image
 from numpy import asarray
 import numpy as np
@@ -7,16 +6,12 @@ import json
 import os
 from ultralytics import YOLO
 from keras_facenet import FaceNet
-
 embedder=FaceNet()
 for root, dirs, files in os.walk(".."):
     if 'best_float32.tflite' in files:
         model_path = os.path.join(root, 'best_float32.tflite')
         tflite_model =YOLO(model_path,task='detect')
-
- 
-
-
+        
 # tflite_model =YOLO("AiFiles/faceDetectionModel/best_float32.tflite",task='detect')
 
 def imgPath_to_encoding(image_path):
@@ -38,6 +33,8 @@ def imgPath_to_encoding(image_path):
     face_array=np.asarray(image)
     
     try:
+        
+
         embedding = embedder.extract(face_array, threshold=0.95)[0]['embedding']
     except Exception as e:
         # Code to handle any error
@@ -62,16 +59,22 @@ def img_to_encoding(image):
     if face_array.dtype == np.int32:
         face_array = np.clip(face_array, 0, 255).astype(np.uint8) 
     face_array = cv2.resize(face_array, dsize=(640, 640), interpolation=cv2.INTER_AREA)
-    try:
+    try: 
         embedding = embedder.extract(face_array, threshold=0.80)[0]['embedding']
+        return embedding / np.linalg.norm(embedding, ord=2)
     except Exception as e:
         # Code to handle any error
         print(f"An error occurred: {e}")
         print("\nErrow with the following image:",image)
-    return embedding / np.linalg.norm(embedding, ord=2)
-
+        return None
 def verify(img, identity):
-    encoding = img_to_encoding(img)
+    try:
+        encoding = img_to_encoding(img)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+    if encoding is None:
+        return False
     start_dir = '.' 
     data = find_encoding_json(start_dir)
     for enc in data[identity]:

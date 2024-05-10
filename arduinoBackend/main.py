@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 from AiFiles.utils.helper import img_to_encoding , verify, image_to_faces, add_encoding_to_json
 from PIL import Image
+from flask import make_response
 
 app = Flask(__name__)
 
@@ -32,21 +33,33 @@ def identityVerification():
             faces = image_to_faces(image)
             
             for face in faces:
-                face.show()
+                try:
+                    verified=verify(face,identity)
+                except:
+                    continue
                 
-                verified=verify(face,identity)
                 
+                
+                # if(verified):
+                #     data = {'name': str(identity), 'true': str(verified)}
+                #     response = make_response(json.dumps(data), 200)
+                #     response.headers['Content-Type'] = 'application/json'
+                #     return response
+                
+               
                 if(verified):
                     return jsonify({
                                     "name":str(identity),
-                                    "true":str(verified)
+                                    "verified":str(verified)
                                 })            
-            # results = tflite_model('best.jpeg')
-            # Do something with the data
-            # For demonstration, let's return a JSON response with the received data
+            # data = {'name': str(identity), 'verified': verified }
+            # response = make_response(json.dumps(data), 401)  # Or appropriate status code
+            # response.headers['Content-Type'] = 'application/json'
+            # return response
+                  
             return jsonify({
                 "name":str(identity),
-                "true":str(False)
+                "verified":str(False)
             }) 
             
         else:
@@ -71,11 +84,17 @@ def embeddingCreation():
         matrix_array = np.clip(matrix_array, 0, 255).astype(np.uint8)
     reshaped_array = cv2.resize(matrix_array, dsize=(640, 640), interpolation=cv2.INTER_AREA)
     image = Image.fromarray(reshaped_array)
+    
+    faces = image_to_faces(image)
+    if (len(faces) == 0 )):
+        return jsonify({
+                    "status":str("No face found in the image"),
+                }) 
+    
+    
     encoding=img_to_encoding(image)
     add_encoding_to_json(encoding,identity)
-    return jsonify({
-                "name":str(identity)
-            }) 
+    return True 
 
 
 
