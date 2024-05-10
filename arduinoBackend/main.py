@@ -86,7 +86,7 @@ def embeddingCreation():
     image = Image.fromarray(reshaped_array)
     
     faces = image_to_faces(image)
-    if (len(faces) == 0 )):
+    if (len(faces) == 0 ):
         return jsonify({
                     "status":str("No face found in the image"),
                 }) 
