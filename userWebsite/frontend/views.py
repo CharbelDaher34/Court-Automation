@@ -287,24 +287,39 @@ def show_reservations(request):
 
 from PIL import Image
 from io import BytesIO
+import numpy as np
+import requests
 
+@csrf_exempt
+@require_POST
 def uploadImage(request):
-    data=request.POST
-    image=request.FILES    
     user_face = request.FILES['userFace']
     image_data = user_face.read()
     
     # Open the image using Pillow
     img = Image.open(BytesIO(image_data))
-        
-        # Display the image (for demonstration purpose, you may need to adapt this)
-    img.show()
-    return True
+    
+    
+      # Open the image from bytes using BytesIO
 
-def uploadImagee(request):
-    data=request.POST
-    image=data.get('userFacee')
-    print(image.to_list())
+  # Convert the image to the desired format (e.g., RGB)
+    img = img.convert('RGB')  # Replace 'RGB' with 'L' for grayscale
+    image_array = np.array(img)
+# Convert the array to a list (to be JSON serializable)
+    image_list = image_array.tolist()
+  # Get image dimensions
+  # Prepare JSON payload
+    payload = {
+               'image': image_list, 
+               'identity':"charbeldaher34@gmail.com"
+            }
+    json_payload = json.dumps(payload)
+    
+    # Send HTTP POST request
+    url = "http://127.0.0.1:5000/embeddingCreation"  # Replace with your API endpoint
+    response = requests.post(url, json=json_payload)
+    print(response.text)
+    return HttpResponse(response.text, status=200)
 
-    return True
+
 
