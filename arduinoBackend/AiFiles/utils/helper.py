@@ -110,10 +110,10 @@ def add_encoding_to_json(encoding,identity):
             
             if identity in data.keys():
                 # Ensure 'identity' is a list (create an empty list if it doesn't exist)
-                data['identity'] = data.get('identity', [])
-                data['identity'].append(encoding.tolist())
+                data[identity] = data.get('identity', [])
+                data[identity].append(encoding.tolist())
             else:
-                data['identity'] = [encoding.tolist()]
+                data[identity] = [encoding.tolist()]
             
             # Write the updated data back to the JSON file
             with open(encoding_json_path, 'w') as f:

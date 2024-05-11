@@ -88,13 +88,24 @@ def embeddingCreation():
     faces = image_to_faces(image)
     if (len(faces) == 0 ):
         return jsonify({
-                    "status":str("No face found in the image"),
+                    "status":"No face found in the image",
+                    "code":0 #no faces found
+                }) 
+        
+    if (len(faces) > 1 ):
+        return jsonify({
+                    "status":"The photo must only feature your face",
+                    "code":2 #more than 1 face found, needed one
                 }) 
     
     
     encoding=img_to_encoding(image)
     add_encoding_to_json(encoding,identity)
-    return True 
+    return jsonify({
+                    "status":"encoding of your face added to the database",
+                    "code":1 #face added
+        }) 
+    
 
 
 
