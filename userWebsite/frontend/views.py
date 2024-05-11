@@ -284,3 +284,27 @@ def reserve_court_section(request, courtSectionId):
 def show_reservations(request):
     context = request.session.get("reservation_context", {})
     return render(request, "reservations.html", context)
+
+from PIL import Image
+from io import BytesIO
+
+def uploadImage(request):
+    data=request.POST
+    image=request.FILES    
+    user_face = request.FILES['userFace']
+    image_data = user_face.read()
+    
+    # Open the image using Pillow
+    img = Image.open(BytesIO(image_data))
+        
+        # Display the image (for demonstration purpose, you may need to adapt this)
+    img.show()
+    return True
+
+def uploadImagee(request):
+    data=request.POST
+    image=data.get('userFacee')
+    print(image.to_list())
+
+    return True
+
