@@ -9,6 +9,8 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 
 from django.http import HttpResponse
+from django.views.decorators.http import  require_POST
+from django.http import JsonResponse
 
 
 def seeder(request):
@@ -20,6 +22,7 @@ def seeder(request):
     return "SEeded"
 
 @csrf_exempt
+@require_POST
 def create_user(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -47,13 +50,10 @@ def create_user(request):
                 sex=sex,
             )
             client.save();
-          
-            messages.success(request, "User created successfully!")
-            return HttpResponse("User created successfully", status=201)  # 201 Created status
+            return JsonResponse({"message": "User created successfully"}, status=201)
 
         except Exception as e:
-            messages.error(request, f"Error creating user: {e}")
-            return HttpResponse(f"Error creating user: {e}", status=400)  # 400 Bad Request status
+            return JsonResponse({"message": f"Error creating user: {e}"}, status=400)
 
     else:
-        return HttpResponse("Method not allowed", status=405)
+        return JsonResponse({"message": f"Method not allowed"}, status=405)

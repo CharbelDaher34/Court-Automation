@@ -290,36 +290,105 @@ from io import BytesIO
 import numpy as np
 import requests
 
+# @csrf_exempt
+# @require_POST
+# def uploadImage(request):
+#     user_face = request.FILES['userFace']
+#     image_data = user_face.read()
+    
+#     # Open the image using Pillow
+#     img = Image.open(BytesIO(image_data))
+    
+    
+#       # Open the image from bytes using BytesIO
+
+#   # Convert the image to the desired format (e.g., RGB)
+#     img = img.convert('RGB')  # Replace 'RGB' with 'L' for grayscale
+#     image_array = np.array(img)
+# # Convert the array to a list (to be JSON serializable)
+#     image_list = image_array.tolist()
+#   # Get image dimensions
+#   # Prepare JSON payload
+#     payload = {
+#                'image': image_list, 
+#                'identity':"charbeldaher34@gmail.com"
+#             }
+#     json_payload = json.dumps(payload)
+    
+#     # Send HTTP POST request
+#     url = "http://127.0.0.1:5000/embeddingCreation"  # Replace with your API endpoint
+#     response = requests.post(url, json=json_payload)
+#     print(response.text)
+#     return HttpResponse(response.text, status=200)
+
+
+
+
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+import json
 @csrf_exempt
 @require_POST
-def uploadImage(request):
-    user_face = request.FILES['userFace']
-    image_data = user_face.read()
+def submit_user_creation_form(request):
+    if request.method != 'POST':
+       return HttpResponseBadRequest("Invalid request method")
     
-    # Open the image using Pillow
-    img = Image.open(BytesIO(image_data))
-    
-    
-      # Open the image from bytes using BytesIO
-
-  # Convert the image to the desired format (e.g., RGB)
-    img = img.convert('RGB')  # Replace 'RGB' with 'L' for grayscale
-    image_array = np.array(img)
-# Convert the array to a list (to be JSON serializable)
-    image_list = image_array.tolist()
-  # Get image dimensions
-  # Prepare JSON payload
-    payload = {
-               'image': image_list, 
-               'identity':"charbeldaher34@gmail.com"
-            }
-    json_payload = json.dumps(payload)
-    
-    # Send HTTP POST request
-    url = "http://127.0.0.1:5000/embeddingCreation"  # Replace with your API endpoint
-    response = requests.post(url, json=json_payload)
-    print(response.text)
-    return HttpResponse(response.text, status=200)
-
-
-
+    if request.method == 'POST':
+      # Extract data from request.POST dictionary (similar to form values)
+      first_name = request.POST.get('firstName')
+      last_name = request.POST.get('lastName')
+      email = request.POST.get('email')
+      password = request.POST.get('password')
+      phone_number = request.POST.get('number')
+      country = request.POST.get('country')
+      address = request.POST.get('address')
+      date_of_birth = request.POST.get('date_of_birth')
+      sex = request.POST.get('sex')
+  
+      # Prepare user data dictionary
+      user_data = {
+        "firstName": first_name,
+        "lastName": last_name,
+        "email": email,
+        "password": password,
+        "phoneNumber": phone_number,
+        "country": country,
+        "address": address,
+        "dateOfBirth": date_of_birth,
+        "sex": sex,
+      }
+  
+      # Implement your logic for sending the POST request (using libraries like requests)
+      # Replace with your actual backend URL and logic for handling response
+      response = requests.post(f'http://localhost:8000/backend/create_user/', json=user_data)
+  
+      if response.status_code == 201:  # Assuming successful creation returns 200
+        # User created successfully, redirect or display confirmation message
+        
+          user_face = request.FILES['userFace']
+          if user_face:
+                image_data = user_face.read()
+                
+                img = Image.open(BytesIO(image_data))    
+                img = img.convert('RGB')  
+                img.show()
+                image_array = np.array(img)
+                image_list = image_array.tolist()
+                payload = {
+                           'image': image_list, 
+                           'identity':email
+                        }
+                json_payload = json.dumps(payload)
+                
+                # Send HTTP POST request
+                url = "http://127.0.0.1:5000/embeddingCreation"  # Replace with your API endpoint
+                response = requests.post(url, json=json_payload)
+                print(response.text)
+          return HttpResponse(response.text, status=200)
+        
+      else:
+        # Handle creation failure
+        return HttpResponse(f"Error creating user: {response.text}")  
+  
+  
+  
