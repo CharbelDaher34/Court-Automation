@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -93,8 +95,6 @@
   </style>
 
   <body onload="init()">
- 
-
     <h1>Reserve Court Section</h1>
     <h2>Court Section: {{ court_section.sectionName }}</h2>
     <h2>Date: {{ date }}</h2>
@@ -135,6 +135,11 @@
 
     <form id="userCreationForm" method="post" enctype="multipart/form-data" action="{% url 'submit_user_creation_form' %}">
       {% csrf_token %}
+      <input type="hidden" id="courtSectionId" name="courtSectionId" value="{{ court_section.courtSectionId }}" />
+      <input type="hidden" id="date" name="date" value="{{ date }}" />
+  
+
+    
 
       <label for="firstName">First Name:</label><br />
       <input type="text" id="firstName" name="firstName" /><br /><br />
@@ -173,23 +178,14 @@
       <br /><br />
 
       <label for="userFace"
-      >If you want to be authenticated using your face upload a photo of your
-      face only, and make sure it is not so close to your face:</label
-    ><br />
-    <input type="file" name="userFace" id="userFace" accept="image/*" />
+        >If you want to be authenticated using your face upload a photo of your
+        face only, and make sure it is not so close to your face:</label
+      ><br />
+      <input type="file" name="userFace" id="userFace" accept="image/*" />
       <br /><br /><br />
 
-      <button>submit</button>
+      <button type="submit">submit</button>
     </form>
-
-    <form >
-
-      <button type="submit">Upload</button>
-    </form>
-
-
-
-
     <br /><br /><br />
 
     <footer>
@@ -197,220 +193,5 @@
     </footer>
   </body>
 
-  <script>
-    function showImage() {
-      alert("tomato");
-
-      image = document.getElementById("userFacee").files[0];
-      alert(image);
-    }
-    function init() {
-      document.getElementById("userCreationForm").style.display = "none";
-    }
-
-    function showForm() {
-      var userCreationForm = document.getElementById("userCreationForm");
-      if (userCreationForm.style.display === "block") {
-        userCreationForm.style.display = "none"; // Hide the form
-      } else {
-        userCreationForm.style.display = "block"; // Show the form
-      }
-    }
-
-    function submitUserCreationForm() {
-      alert("creation beginnig");
-      // Get references to all input elements
-      const firstNameInput = document.getElementById("firstName");
-      const lastNameInput = document.getElementById("lastName");
-      const emailInput = document.getElementById("userCreationemail"); // Updated ID
-      const passwordInput = document.getElementById("userCreationPassword"); // New ID
-      const numberInput = document.getElementById("number");
-      const countryInput = document.getElementById("country");
-      const addressInput = document.getElementById("address");
-      const dobInput = document.getElementById("date_of_birth");
-      const sexSelect = document.getElementById("sex");
-
-      // Extract values from each input
-      const firstName = firstNameInput.value;
-      const lastName = lastNameInput.value;
-      const email = emailInput.value;
-      const password = passwordInput.value; // New variable for password
-      const phoneNumber = numberInput.value;
-      const country = countryInput.value;
-      const address = addressInput.value;
-      const dateOfBirth = dobInput.value;
-      const sex = sexSelect.value;
-
-      // Prepare data object for sending the request
-      const userData = {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password, // Include password in the data object
-        phoneNumber: phoneNumber,
-        country: country,
-        address: address,
-        dateOfBirth: dateOfBirth,
-        sex: sex,
-      };
-
-      fetch("http://localhost:8000/backend/create_user/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      })
-        .then((response) => {
-          if (response.ok) {
-            alert("User created successfully!");
-          } else {
-            throw new Error("Failed to create user");
-          }
-        })
-        .catch((error) => {
-          alert("Error creating user: " + error.message);
-        });
-    }
-
-    function uploadImage(image, identity) {
-      
-      const formData = {
-        image: image,
-        identity: identity,
-      };
-      fetch("http://127.0.0.1:5000/embeddingCreation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Check the status code and display the corresponding message
-          if (data.code === 0) {
-            alert(data.status); // No face found in the image
-          } else if (data.code === 2) {
-            alert(data.status); // More than 1 face found
-          } else if (data.code === 1) {
-            alert(data.status); // Encoding of your face added to the database
-          } else {
-          }
-        })
-        .catch((error) => console.error("Error:", error));
-    }
-
-    function groupPairs(array) {
-      const pairs = [];
-      for (let i = 0; i < array.length; i += 2) {
-        if (i + 1 < array.length) {
-          pairs.push([array[i], array[i + 1]]);
-        } else {
-          pairs.push([array[i]]);
-        }
-      }
-      return pairs;
-    }
-
-    function checkAvailability() {
-      var startTime = document.getElementById("startTime").value;
-      var endTime = document.getElementById("endTime").value;
-      let available_slots = document.getElementById("slots").value;
-      // Convert startTime and endTime to integers
-      let [hours, minutes] = startTime.split(":");
-      let startHour = parseInt(hours);
-      let startMin = (parseInt(minutes)[(hours, minutes)] = endTime.split(":"));
-      let endHour = parseInt(hours);
-      let endMin = parseInt(minutes);
-
-      // Convert available_slots to a list of tuples of integers
-      let stringData = available_slots.replace(/\[|\]|\(/g, "");
-      let dataArray = stringData.replace(/'/g, "").split("),");
-      dataArray = dataArray.map((item) => item.trim());
-      parts = dataArray[0].split(",").map((part) => part.trim());
-      available_slots = parts.map((part) => {
-        let [hour, minute] = part.split(":").map((num) => parseInt(num));
-        return [hour, minute];
-      });
-
-      available_slots = groupPairs(available_slots);
-      let isAvailable = false; // Initialize availability flag to false
-
-      for (let i = 0; i < available_slots.length; i = i + 1) {
-        let slot = available_slots[i];
-
-        let slotStartHour = slot[0][0];
-        let slotStartMin = slot[0][1];
-        let slotEndHour = slot[1][0];
-        let slotEndMin = slot[1][1];
-
-        // Check if start time falls within the current available slot
-        if (
-          (startHour > slotStartHour ||
-            (startHour === slotStartHour && startMin >= slotStartMin)) &&
-          // Check if end time also falls within the current available slot
-          (endHour < slotEndHour ||
-            (endHour === slotEndHour && endMin <= slotEndMin))
-        ) {
-          isAvailable = true; // Slot found, set flag to true
-          break; // Exit the loop once a slot is found
-        } else {
-          // No match, continue checking other slots
-        }
-      }
-
-      var courtSectionId = "{{ court_section.courtSectionId }}";
-      var date = "{{ date }}";
-
-      var email = document.getElementById("email").value;
-      var password = document.getElementById("password").value;
-
-      var requestData = {
-        email: email,
-        password: password,
-        courtSectionId: courtSectionId,
-        startTime: startTime,
-        endTime: endTime,
-        date: date,
-      };
-      alert(requestData);
-      fetch(
-        "http://localhost:8000/frontend/reserve_court_section/" +
-          courtSectionId +
-          "/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        }
-      ).then((response) => {
-        if (response.ok) {
-          fetch("http://localhost:8000/frontend/home/", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          alert("Reservation successfully!");
-        } else if (response.status === 404) {
-          alert("Client not found");
-        } else if (response.status === 401) {
-          alert("Incorrect password");
-        }
-      });
-    }
-
-    function updateDateTime() {
-      const now = new Date();
-      const dateTimeString = now.toLocaleString();
-      const footerElement = document.querySelector("footer p");
-      footerElement.textContent = `${dateTimeString}`;
-    }
-
-    setInterval(updateDateTime, 1000); // Update every second
-  </script>
+  <script src="{% static 'js/reservations.js' %}"></script>
 </html>
