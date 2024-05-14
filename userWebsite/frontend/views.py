@@ -162,6 +162,9 @@ def reserve_court_section(request, courtSectionId):
             return JsonResponse({"error": "Client not found"}, status=404)
         if password != client.password:
             return JsonResponse({"error": "Incorrect password"}, status=401)
+        token = hash(email+str(password))
+        print(token)
+
 
         # courtSectionId = request.POST.get('court_section_id')
         # available_slots = request.POST.get('available_slots')  # This will be a string representation of the list
@@ -171,6 +174,8 @@ def reserve_court_section(request, courtSectionId):
             date=date,
             startTime=startTime,
             endTime=endTime,
+            token=token,
+            clientId=client
         )
         reservation.save()
         context = {}
@@ -266,11 +271,6 @@ def submit_user_creation_form(request):
             courtSectionId = data.get("courtSectionId")  
             selected_date = data.get("date")            
             return redirect(reverse('available_times') + f'?courtSectionId={courtSectionId}&date={selected_date}')
-
-         
-
-        
-
         else:
             
             courtSectionId = data.get("courtSectionId")  
