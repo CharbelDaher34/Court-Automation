@@ -3,7 +3,7 @@ import pretty_errors
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseBadRequest
 from datetime import timedelta, datetime
-from backend.models import CourtSection, Reservation, Court, Admin, Client
+from backend.models import CourtSection, Reservation, Court, Admin, Client, Review
 import json
 from datetime import date
 import os
@@ -278,3 +278,46 @@ def submit_user_creation_form(request):
             return redirect(reverse('available_times') + f'?courtSectionId={courtSectionId}&date={selected_date}')
             # Handle creation failure
             return JsonResponse({"message": "Error creating user"}, status=500)
+        
+        
+        
+        
+        
+def write_review(request, court_section_id):
+  """
+  View to handle displaying a review form for a specific court section.
+  """
+
+
+  # Handle form submission logic here (if applicable)
+  if request.method == 'GET':
+      
+        # Get the CourtSection object with the provided ID
+        court_section = get_object_or_404(CourtSection, pk=court_section_id)
+        review_dicts={}
+        reviews=[]
+        reservations = Reservation.objects.filter(courtsectionID=court_section)
+        for reservation in reservations:            
+            tmp=Review.objects.filter(reservationId=reservation)
+            if tmp.exists():
+                for review in tmp:
+                    reviews.append(review)
+                
+                        
+        review_dicts = [
+        {
+            'reservationId': review.reservationId,
+            'rating': review.rating,
+            'comment': review.comment,
+            'created_at': review.created_at,
+        }
+    for review in reviews
+]
+        
+        context = {'court_section': court_section, 'reservations': reservations, 'reviews': review_dicts}
+
+
+        return render(request,'reviews.html',context)  # Redirect after successful submission (adjust as needed)
+
+  context = {'court_section': court_section}
+  return render(request, 'write_review.html', context)  # Render review form template

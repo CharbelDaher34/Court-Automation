@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Reviews</title>
+</head>
+<body>
+    <h1>All Reviews</h1>
+
+    {% if reviews %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Reservation ID</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr>
+                    <td>{{ review.reservationId.reservationID }}</td>  <td>{{ review.rating }}</td>
+                    <td>{{ review.comment }}</td>
+                    <td>{{ review.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No reviews found.</p>
+    {% endif %}
+
+</body>
+</html>

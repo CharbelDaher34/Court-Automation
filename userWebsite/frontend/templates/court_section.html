@@ -100,6 +100,8 @@
             <th>Fan Capacity</th>
             <th>Open Time</th>
             <th>Close Time</th>
+            <th>Review</th>
+
             <th>ID</th>
           </tr>
         </thead>
@@ -120,6 +122,9 @@
             <td>{{ court_section.fansCapacity }}</td>
             <td>{{ court_section.openTime }}</td>
             <td>{{ court_section.closeTime }}</td>
+            <td>
+              <a href="{% url 'write_review' court_section.courtSectionId %}">Write Review</a>
+            </td>
             <td>{{ court_section.courtSectionId }}</td>
           </tr>
           {% endfor %}
