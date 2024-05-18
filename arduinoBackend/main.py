@@ -5,6 +5,7 @@ import cv2
 from AiFiles.utils.helper import img_to_encoding , verify, image_to_faces, add_encoding_to_json
 from PIL import Image
 from flask import make_response
+import io
 
 app = Flask(__name__)
 
@@ -65,8 +66,6 @@ def identityVerification():
         else:
             return jsonify({'error': 'Only POST requests are allowed.'}), 405
     except Exception as e:
-        with open("logs.txt", "a") as f:
-            f.write(str(e) + "\n")
         # Return an error response with a generic message
         return jsonify({"error": "An unexpected error occurred. Please check the server logs."}), 500
 
@@ -74,16 +73,40 @@ def identityVerification():
 
 @app.route('/embeddingCreation', methods=['POST'])
 def embeddingCreation():
-    json_data = request.json
-    matrix_dict = json.loads(json_data)
+    if request.content_type.startswith('multipart/form-data'):
+        if 'image' in request.files:
+            # Get the uploaded image file
+            image_file = request.files['image']
+            
+            # Read the image file using PIL (Pillow)
+            image = Image.open(io.BytesIO(image_file.read()))
+                        
+        # Convert the image to a NumPy array
+            image_array = np.array(image)
+        
+        # Check and clip the dtype if it's np.int32
+            if image_array.dtype == np.int32:
+                image_array = np.clip(image_array, 0, 255).astype(np.uint8)
+            
+            # Resize the array
+            resized_array = cv2.resize(image_array, dsize=(640, 640), interpolation=cv2.INTER_AREA)
+            
+            # Convert the resized array back to an image
+            image = Image.fromarray(resized_array)          
+            identity = request.form['identity']
+    else:
+        json_data = request.json
+        matrix_dict = json.loads(json_data)
+    
+        matrix = matrix_dict['image']
+        identity=matrix_dict['identity']
+        matrix_array = np.array(matrix)
+        if matrix_array.dtype == np.int32:
+            matrix_array = np.clip(matrix_array, 0, 255).astype(np.uint8)
+        reshaped_array = cv2.resize(matrix_array, dsize=(640, 640), interpolation=cv2.INTER_AREA)
+        image = Image.fromarray(reshaped_array)
 
-    matrix = matrix_dict['image']
-    identity=matrix_dict['identity']
-    matrix_array = np.array(matrix)
-    if matrix_array.dtype == np.int32:
-        matrix_array = np.clip(matrix_array, 0, 255).astype(np.uint8)
-    reshaped_array = cv2.resize(matrix_array, dsize=(640, 640), interpolation=cv2.INTER_AREA)
-    image = Image.fromarray(reshaped_array)
+
     
     faces = image_to_faces(image)
     if (len(faces) == 0 ):

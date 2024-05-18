@@ -95,6 +95,8 @@
   </style>
 
   <body onload="init()">
+    <input type="file" name="userFacee" id="userFacee" accept="image/*" />
+
     <h1>Reserve Court Section</h1>
     <h2>Court Section: {{ court_section.sectionName }}</h2>
     <h2>Date: {{ date }}</h2>
@@ -164,112 +166,146 @@
       </select>
       <br /><br />
 
-      <label for="userFace">If you want to be authenticated using your face upload a photo of your face only, and make sure it is not so close to your face:</label><br />
-      <input type="file" name="userFace" id="userFace" accept="image/*" />
       <br /><br /><br />
 
       <button type="submit">submit</button>
     </form>
-    <br /><br /><br />
 
+    <br /><br /><br />
+    <div>
+      <label for="email">Email:</label><br />
+      <input type="email" id="emailFace" /><br /><br />
+      <label for="userFace">If you want to be authenticated using your face upload a photo of your face only, and make sure it is not so close to your face:</label><br />
+      <input type="file" name="userFace" id="userFace" accept="image/*" />
+      <button id="uploadButton">Add face</button>
+    </div>
     <footer>
       <p></p>
     </footer>
   </body>
 
-
-<script>
-  function checkAvailability() {
-
-    var startTime = document.getElementById("startTime").value;
-    var endTime = document.getElementById("endTime").value;
-    let available_slots = document.getElementById("slots").value;
-    // Convert startTime and endTime to integers
-    let [hours, minutes] = startTime.split(":");
-    let startHour = parseInt(hours);
-    let startMin = (parseInt(minutes)[(hours, minutes)] = endTime.split(":"));
-    let endHour = parseInt(hours);
-    let endMin = parseInt(minutes);
-
-    // Convert available_slots to a list of tuples of integers
-    let stringData = available_slots.replace(/\[|\]|\(/g, "");
-    let dataArray = stringData.replace(/'/g, "").split("),");
-    dataArray = dataArray.map((item) => item.trim());
-    parts = dataArray[0].split(",").map((part) => part.trim());
-    available_slots = parts.map((part) => {
-        let [hour, minute] = part.split(":").map((num) => parseInt(num));
-        return [hour, minute];
-    });
-
-    available_slots = groupPairs(available_slots);
-    let isAvailable = false; // Initialize availability flag to false
-
-    for (let i = 0; i < available_slots.length; i = i + 1) {
-        let slot = available_slots[i];
-
-        let slotStartHour = slot[0][0];
-        let slotStartMin = slot[0][1];
-        let slotEndHour = slot[1][0];
-        let slotEndMin = slot[1][1];
-
+  <script>
+    function checkAvailability() {
+      var startTime = document.getElementById('startTime').value
+      var endTime = document.getElementById('endTime').value
+      let available_slots = document.getElementById('slots').value
+      // Convert startTime and endTime to integers
+      let [hours, minutes] = startTime.split(':')
+      let startHour = parseInt(hours)
+      let startMin = (parseInt(minutes)[(hours, minutes)] = endTime.split(':'))
+      let endHour = parseInt(hours)
+      let endMin = parseInt(minutes)
+    
+      // Convert available_slots to a list of tuples of integers
+      let stringData = available_slots.replace(/\[|\]|\(/g, '')
+      let dataArray = stringData.replace(/'/g, '').split('),')
+      dataArray = dataArray.map((item) => item.trim())
+      parts = dataArray[0].split(',').map((part) => part.trim())
+      available_slots = parts.map((part) => {
+        let [hour, minute] = part.split(':').map((num) => parseInt(num))
+        return [hour, minute]
+      })
+    
+      available_slots = groupPairs(available_slots)
+      let isAvailable = false // Initialize availability flag to false
+    
+      for (let i = 0; i < available_slots.length; i = i + 1) {
+        let slot = available_slots[i]
+    
+        let slotStartHour = slot[0][0]
+        let slotStartMin = slot[0][1]
+        let slotEndHour = slot[1][0]
+        let slotEndMin = slot[1][1]
+    
         // Check if start time falls within the current available slot
         if (
-            (startHour > slotStartHour ||
-                (startHour === slotStartHour && startMin >= slotStartMin)) &&
-            // Check if end time also falls within the current available slot
-            (endHour < slotEndHour ||
-                (endHour === slotEndHour && endMin <= slotEndMin))
+          (startHour > slotStartHour || (startHour === slotStartHour && startMin >= slotStartMin)) &&
+          // Check if end time also falls within the current available slot
+          (endHour < slotEndHour || (endHour === slotEndHour && endMin <= slotEndMin))
         ) {
-            isAvailable = true; // Slot found, set flag to true
-            break; // Exit the loop once a slot is found
+          isAvailable = true // Slot found, set flag to true
+          break // Exit the loop once a slot is found
         } else {
-            // No match, continue checking other slots
+          // No match, continue checking other slots
         }
-    }
-
-    var courtSectionId = "{{ court_section.courtSectionId }}";
-    var date = "{{ date }}";
-
-    var email = document.getElementById("email").value;
-    var password = document.getElementById("password").value;
-
-    var requestData = {
+      }
+    
+      var courtSectionId = '{{ court_section.courtSectionId }}'
+      var date = '{{ date }}'
+    
+      var email = document.getElementById('email').value
+      var password = document.getElementById('password').value
+    
+      var requestData = {
         email: email,
         password: password,
         courtSectionId: courtSectionId,
         startTime: startTime,
         endTime: endTime,
-        date: date,
-    };
-    alert(courtSectionId);
-    fetch(
-        "http://localhost:8000/frontend/reserve_court_section/" + courtSectionId + "/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData),
-        }
-    ).then((response) => {
-        alert("batata" + response.status);
+        date: date
+      }
+      alert(courtSectionId)
+      fetch('http://localhost:8000/frontend/reserve_court_section/' + courtSectionId + '/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      }).then((response) => {
+        alert('batata' + response.status)
         if (response.ok) {
-            fetch("http://localhost:8000/frontend/home/", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
-            alert("Reservation successfully!");
+          fetch('http://localhost:8000/frontend/home/', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+    
+          alert('Reservation successfully!')
         } else if (response.status === 404) {
-            alert("Client not found");
+          alert('Client not found')
         } else if (response.status === 401) {
-            alert("Incorrect password");
+          alert('Incorrect password')
         }
-    });
-}
-</script>
-
+      })
+    }
+    
+    // Assuming you have an HTML file with an input field for the image and a button to trigger the API call
+    
+    // Function to handle the API call
+    async function callAPI() {
+      // Get the file input element
+      const fileInput = document.getElementById('userFace')
+      const email = document.getElementById('emailFace').value
+      // Get the file selected by the user
+      const file = fileInput.files[0]
+    
+      // Create a FormData object to send the file
+      const formData = new FormData()
+      formData.append('image', file)
+      formData.append('identity', email)
+      alert('dsfsd')
+      // Send HTTP POST request
+      const url = 'http://127.0.0.1:5000/embeddingCreation' // Replace with your API endpoint
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData
+      })
+      alert(response.status)
+      // Check if the request was successful
+      // Check if the request was successful
+      if (response.ok) {
+        const data = await response.json() // Parse the JSON response
+        console.log(data) // Do something with the response data
+      } else {
+        alert('Request failed with status:', response.status)
+      }
+    }
+    
+    // Attach an event listener to the button to trigger the API call
+    const button = document.getElementById('uploadButton')
+    button.addEventListener('click', callAPI)
+  </script>
 
   <script src="{% static 'js/reservations.js' %}"></script>
 </html>

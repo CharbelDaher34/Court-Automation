@@ -31,7 +31,8 @@ class CourtSection(models.Model):
     sectionType = models.CharField(max_length=20, choices=TYPE_CHOICES)
     fansCapacity = models.IntegerField()
     openTime = models.TimeField(null=True)
-    closeTime = models.TimeField(null=True)    
+    closeTime = models.TimeField(null=True)   
+    pricePerHour=models.IntegerField(null=True)
 
 class VendingMachine(models.Model):
     vendingMachineId = models.AutoField(primary_key=True)

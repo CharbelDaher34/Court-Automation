@@ -132,7 +132,6 @@ def available_times(request):
     return redirect("show_reservations")
 
 
-
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
 
@@ -162,9 +161,8 @@ def reserve_court_section(request, courtSectionId):
             return JsonResponse({"error": "Client not found"}, status=404)
         if password != client.password:
             return JsonResponse({"error": "Incorrect password"}, status=401)
-        token = hash(email+str(password))
+        token = hash(email + str(password))
         print(token)
-
 
         # courtSectionId = request.POST.get('court_section_id')
         # available_slots = request.POST.get('available_slots')  # This will be a string representation of the list
@@ -175,7 +173,7 @@ def reserve_court_section(request, courtSectionId):
             startTime=startTime,
             endTime=endTime,
             token=token,
-            clientId=client
+            clientId=client,
         )
         reservation.save()
         context = {}
@@ -198,7 +196,6 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 import requests
-
 
 
 from django.shortcuts import render, redirect
@@ -247,77 +244,83 @@ def submit_user_creation_form(request):
 
         if response.ok:  # Assuming successful creation returns 200
             # User created successfully, redirect or display confirmation message
-            try:
+            # try:
 
-                user_face = request.FILES["userFace"]
-                if user_face:
-                    image_data = user_face.read()
+            #     user_face = request.FILES["userFace"]
+            #     if user_face:
+            #         image_data = user_face.read()
 
-                    img = Image.open(BytesIO(image_data))
-                    img = img.convert("RGB")
-                    img.show()
-                    image_array = np.array(img)
-                    image_list = image_array.tolist()
-                    payload = {"image": image_list, "identity": email}
-                    json_payload = json.dumps(payload)
+            #         img = Image.open(BytesIO(image_data))
+            #         img = img.convert("RGB")
+            #         img.show()
+            #         image_array = np.array(img)
+            #         image_list = image_array.tolist()
+            #         payload = {"image": image_list, "identity": email}
+            #         json_payload = json.dumps(payload)
 
-                    # Send HTTP POST request
-                    url = "http://127.0.0.1:5000/embeddingCreation"  # Replace with your API endpoint
-                    response = requests.post(url, json=json_payload)
-                    print(response.text)
-            except:
-                print("no image")
-                
-            courtSectionId = data.get("courtSectionId")  
-            selected_date = data.get("date")            
-            return redirect(reverse('available_times') + f'?courtSectionId={courtSectionId}&date={selected_date}')
+            #         # Send HTTP POST request
+            #         url = "http://127.0.0.1:5000/embeddingCreation"  # Replace with your API endpoint
+            #         response = requests.post(url, json=json_payload)
+            #         print(response.text)
+            # except:
+            #     print("no image")
+
+            courtSectionId = data.get("courtSectionId")
+            selected_date = data.get("date")
+            return redirect(
+                reverse("available_times")
+                + f"?courtSectionId={courtSectionId}&date={selected_date}"
+            )
         else:
-            
-            courtSectionId = data.get("courtSectionId")  
-            selected_date = data.get("date")            
-            return redirect(reverse('available_times') + f'?courtSectionId={courtSectionId}&date={selected_date}')
+
+            courtSectionId = data.get("courtSectionId")
+            selected_date = data.get("date")
+            return redirect(
+                reverse("available_times")
+                + f"?courtSectionId={courtSectionId}&date={selected_date}"
+            )
             # Handle creation failure
             return JsonResponse({"message": "Error creating user"}, status=500)
-        
-        
-        
-        
-        
+
+
 def write_review(request, court_section_id):
-  """
-  View to handle displaying a review form for a specific court section.
-  """
+    """
+    View to handle displaying a review form for a specific court section.
+    """
 
+    # Handle form submission logic here (if applicable)
+    if request.method == "GET":
 
-  # Handle form submission logic here (if applicable)
-  if request.method == 'GET':
-      
         # Get the CourtSection object with the provided ID
         court_section = get_object_or_404(CourtSection, pk=court_section_id)
-        review_dicts={}
-        reviews=[]
+        review_dicts = {}
+        reviews = []
         reservations = Reservation.objects.filter(courtsectionID=court_section)
-        for reservation in reservations:            
-            tmp=Review.objects.filter(reservationId=reservation)
+        for reservation in reservations:
+            tmp = Review.objects.filter(reservationId=reservation)
             if tmp.exists():
                 for review in tmp:
                     reviews.append(review)
-                
-                        
+
         review_dicts = [
-        {
-            'reservationId': review.reservationId,
-            'rating': review.rating,
-            'comment': review.comment,
-            'created_at': review.created_at,
+            {
+                "reservationId": review.reservationId,
+                "rating": review.rating,
+                "comment": review.comment,
+                "created_at": review.created_at,
+            }
+            for review in reviews
+        ]
+
+        context = {
+            "court_section": court_section,
+            "reservations": reservations,
+            "reviews": review_dicts,
         }
-    for review in reviews
-]
-        
-        context = {'court_section': court_section, 'reservations': reservations, 'reviews': review_dicts}
 
+        return render(
+            request, "reviews.html", context
+        )  # Redirect after successful submission (adjust as needed)
 
-        return render(request,'reviews.html',context)  # Redirect after successful submission (adjust as needed)
-
-  context = {'court_section': court_section}
-  return render(request, 'write_review.html', context)  # Render review form template
+    context = {"court_section": court_section}
+    return render(request, "write_review.html", context)  # Render review form template
