@@ -1,20 +1,3 @@
-function init() {
-    document.getElementById("userCreationForm").style.display = "none";
-
-}
-
-
-
-function showFormFace() {
-    alert("")
-    var faceAddForm = document.getElementById("addFaceForm");
-    if (faceAddForm.style.display === "block") {
-        faceAddForm.style.display = "none"; // Hide the form
-    } else {
-        faceAddForm.style.display = "block"; // Show the form
-    }
-}
-
 function showForm() {
     var userCreationForm = document.getElementById("userCreationForm");
     if (userCreationForm.style.display === "block") {

@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reserve Court Section</title>
   </head>
+  <script src="{% static 'js/reservations.js' %}"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif; /* Ensures text is in Arial, if not available then sans-serif */
@@ -179,6 +181,7 @@
       <input type="file" name="userFace" id="userFace" accept="image/*" /> <br />
       <button id="uploadButton">Add face</button>
     </div>
+    <button onload="showFormFace()">add face</button>
 
     <footer>
       <p></p>
@@ -186,6 +189,20 @@
   </body>
 
   <script>
+    function showFormFace() {
+      alert("")
+      var faceAddForm = document.getElementById("addFaceForm");
+      if (faceAddForm.style.display === "block") {
+          faceAddForm.style.display = "none"; // Hide the form
+      } else {
+          faceAddForm.style.display = "block"; // Show the form
+      }
+  }
+    function init() {
+      document.getElementById("userCreationForm").style.display = "none";
+      document.getElementById("addFaceForm").style.display = "none";
+  
+  }
     function checkAvailability() {
       var startTime = document.getElementById('startTime').value
       var endTime = document.getElementById('endTime').value
@@ -314,7 +331,7 @@
     const button = document.getElementById('uploadButton')
     button.addEventListener('click', callAPI)
     
-  async function create_user() {
+    async function create_user() {
       // Create an object to store the form data
       let formData = {}
     
@@ -335,33 +352,25 @@
       // Get the selected value from the dropdown
       formData.sex = document.getElementById('sex').value
       const jsonData = JSON.stringify(formData) // Convert the form data to a JSON string
-
-try{
-      response = await fetch("http://localhost:8000/backend/create_user/", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Add any other headers if required, such as CSRF token
-        },
-        body: jsonData,
-      });
-  
-      const responseData = await response.json();
-  
-      alert(responseData.message);
-      // Handle the response data as needed, such as displaying messages to the user
-    } catch (error) {
-      alert('Error:', error);
-      // Handle errors, such as displaying an error message to the user
-    }
-  }
-  
-
-
- 
-      
-      
     
+      try {
+        response = await fetch('http://localhost:8000/backend/create_user/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+            // Add any other headers if required, such as CSRF token
+          },
+          body: jsonData
+        })
+    
+        const responseData = await response.json()
+    
+        alert(responseData.message)
+        // Handle the response data as needed, such as displaying messages to the user
+      } catch (error) {
+        alert('Error:', error)
+        // Handle errors, such as displaying an error message to the user
+      }
+    }
   </script>
-  <script src="{% static 'js/reservations.js' %}"></script>
 </html>
