@@ -279,6 +279,8 @@
       alert('batata' + response.ok)
       if (response.status==200) {
         alert("saf");
+        window.location.href = 'http://localhost:8000/frontend/home/';
+
         fetch('http://localhost:8000/frontend/home/', {
           method: 'GET',
           headers: {
