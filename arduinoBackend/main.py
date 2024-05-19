@@ -7,8 +7,10 @@ from PIL import Image
 from flask import make_response
 import io
 
-app = Flask(__name__)
+from flask_cors import CORS
 
+app = Flask(__name__)
+CORS(app)
 ##Ai models
 @app.route('/imageVerification', methods=['GET'])
 def identityVerification():  
@@ -110,12 +112,14 @@ def embeddingCreation():
     
     faces = image_to_faces(image)
     if (len(faces) == 0 ):
+        return '0'
         return jsonify({
                     "status":"No face found in the image",
                     "code":0 #no faces found
                 }) 
         
     if (len(faces) > 1 ):
+        return '2'
         return jsonify({
                     "status":"The photo must only feature your face",
                     "code":2 #more than 1 face found, needed one
@@ -124,6 +128,7 @@ def embeddingCreation():
     
     encoding=img_to_encoding(image)
     add_encoding_to_json(encoding,identity)
+    return '1'
     return jsonify({
                     "status":"encoding of your face added to the database",
                     "code":1 #face added

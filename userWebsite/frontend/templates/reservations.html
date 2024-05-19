@@ -95,8 +95,6 @@
   </style>
 
   <body onload="init()">
-    <input type="file" name="userFacee" id="userFacee" accept="image/*" />
-
     <h1>Reserve Court Section</h1>
     <h2>Court Section: {{ court_section.sectionName }}</h2>
     <h2>Date: {{ date }}</h2>
@@ -130,7 +128,8 @@
 
     <button id="show" onclick="showForm()">create user</button>
 
-    <form id="userCreationForm" method="post" enctype="multipart/form-data" action="{% url 'submit_user_creation_form' %}">
+    <form id="userCreationForm" method="post" enctype="multipart/form-data">
+      {% comment %}action="{% url 'submit_user_creation_form' %}">{% endcomment %}
       {% csrf_token %}
       <input type="hidden" id="courtSectionId" name="courtSectionId" value="{{ court_section.courtSectionId }}" />
       <input type="hidden" id="date" name="date" value="{{ date }}" />
@@ -167,18 +166,20 @@
       <br /><br />
 
       <br /><br /><br />
-
-      <button type="submit">submit</button>
+      <input type="button" value="creeate" onclick="create_user()" />
+      {% comment %} <button type="submit">submit</button> {% endcomment %}
     </form>
 
     <br /><br /><br />
-    <div>
-      <label for="email">Email:</label><br />
-      <input type="email" id="emailFace" /><br /><br />
+    <div id="addFaceForm">
       <label for="userFace">If you want to be authenticated using your face upload a photo of your face only, and make sure it is not so close to your face:</label><br />
-      <input type="file" name="userFace" id="userFace" accept="image/*" />
+      <label for="emailFace">Email:</label><br />
+      <input type="email" id="emailFace" /><br /><br />
+
+      <input type="file" name="userFace" id="userFace" accept="image/*" /> <br />
       <button id="uploadButton">Add face</button>
     </div>
+
     <footer>
       <p></p>
     </footer>
@@ -287,25 +288,80 @@
       alert('dsfsd')
       // Send HTTP POST request
       const url = 'http://127.0.0.1:5000/embeddingCreation' // Replace with your API endpoint
-      const response = await fetch(url, {
-        method: 'POST',
-        body: formData
-      })
-      alert(response.status)
-      // Check if the request was successful
-      // Check if the request was successful
-      if (response.ok) {
-        const data = await response.json() // Parse the JSON response
-        console.log(data) // Do something with the response data
-      } else {
-        alert('Request failed with status:', response.status)
+      try {
+        response = await fetch(url, {
+          method: 'POST',
+          body: formData
+        })
+      } catch (error) {
+        alert('asfasfasf' + error)
+      }
+      data = await response.json() // Parse the JSON response
+      alert(typeof data + ' ' + data)
+    
+      if (parseInt(data) === 1) {
+        alert('face added successfully to your email')
+      }
+      if (parseInt(data) === 2) {
+        alert('make sure you are the only one in the photo')
+      }
+      if (parseInt(data) === 0) {
+        alert('make sure there is a face in the photo')
       }
     }
     
     // Attach an event listener to the button to trigger the API call
     const button = document.getElementById('uploadButton')
     button.addEventListener('click', callAPI)
-  </script>
+    
+  async function create_user() {
+      // Create an object to store the form data
+      let formData = {}
+    
+      // Get the values of the hidden inputs
+      formData.courtSectionId = document.getElementById('courtSectionId').value
+      formData.date = document.getElementById('date').value
+    
+      // Get the values of the text inputs
+      formData.firstName = document.getElementById('firstName').value
+      formData.lastName = document.getElementById('lastName').value
+      formData.email = document.getElementById('userCreationemail').value
+      formData.password = document.getElementById('userCreationPassword').value
+      formData.number = document.getElementById('number').value
+      formData.country = document.getElementById('country').value
+      formData.address = document.getElementById('address').value
+      formData.date_of_birth = document.getElementById('date_of_birth').value
+    
+      // Get the selected value from the dropdown
+      formData.sex = document.getElementById('sex').value
+      const jsonData = JSON.stringify(formData) // Convert the form data to a JSON string
 
+try{
+      response = await fetch("http://localhost:8000/backend/create_user/", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any other headers if required, such as CSRF token
+        },
+        body: jsonData,
+      });
+  
+      const responseData = await response.json();
+  
+      alert(responseData.message);
+      // Handle the response data as needed, such as displaying messages to the user
+    } catch (error) {
+      alert('Error:', error);
+      // Handle errors, such as displaying an error message to the user
+    }
+  }
+  
+
+
+ 
+      
+      
+    
+  </script>
   <script src="{% static 'js/reservations.js' %}"></script>
 </html>
