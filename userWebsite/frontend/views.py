@@ -113,7 +113,6 @@ def available_times(request):
         )
         for time_tuple in available_slots
     ]
-
     context = {
         "court_section": {
             "courtSectionId": court_section.courtSectionId,
@@ -138,7 +137,7 @@ from django.http import JsonResponse
 
 @csrf_exempt
 @require_POST
-def reserve_court_section(request, courtSectionId):
+def reserve_court_section(request):
     context = {}
     if request.method == "POST":
         # Parse JSON data from the request body
@@ -150,9 +149,8 @@ def reserve_court_section(request, courtSectionId):
         startTime = data.get("startTime")
         endTime = data.get("endTime")
         date = data.get("date")
-
-        strr = make_password(password)
-        print(str)
+        availableSlots=data.get("availableSlots")
+  
 
         try:
             client = Client.objects.get(email=email)
@@ -162,11 +160,49 @@ def reserve_court_section(request, courtSectionId):
         if password != client.password:
             return JsonResponse({"error": "Incorrect password"}, status=401)
         token = hash(email + str(password))
-        print(token)
 
         # courtSectionId = request.POST.get('court_section_id')
         # available_slots = request.POST.get('available_slots')  # This will be a string representation of the list
         courtSection = CourtSection.objects.get(courtSectionId=courtSectionId)
+        
+        openTime=courtSection.openTime
+        closeTime=courtSection.closeTime
+        openTime = f"{openTime.hour}:{openTime.minute}"
+        closeTime = f"{closeTime.hour}:{closeTime.minute}"
+
+        
+        #check if the time fits in available slost
+        # Convert startTime, endTime, openTime, and closeTime to total minutes from start of the day
+        start_hour, start_minute = map(int, startTime.split(':'))
+        end_hour, end_minute = map(int, endTime.split(':'))
+        open_hour, open_minute = map(int, openTime.split(':'))
+        close_hour, close_minute = map(int, closeTime.split(':'))
+        
+        start_total_minutes = start_hour * 60 + start_minute
+        end_total_minutes = end_hour * 60 + end_minute
+        open_total_minutes = open_hour * 60 + open_minute
+        close_total_minutes = close_hour * 60 + close_minute
+        
+        is_within_slot = False
+        
+        if start_total_minutes >= open_total_minutes and end_total_minutes <= close_total_minutes:
+            for slot in availableSlots:
+                start = slot[0]
+                end = slot[1]
+                slot_start_hour, slot_start_minute = map(int, start.split(':'))
+                slot_end_hour, slot_end_minute = map(int, end.split(':'))
+                slot_start_total_minutes = slot_start_hour * 60 + slot_start_minute
+                slot_end_total_minutes = slot_end_hour * 60 + slot_end_minute
+        
+                # Check if the reservation time is within the slot interval
+                if start_total_minutes >= slot_start_total_minutes and end_total_minutes <= slot_end_total_minutes:
+                    is_within_slot = True
+                    break
+        
+        
+        
+        
+        
         reservation = Reservation.objects.create(
             courtsectionID=courtSection,
             date=date,

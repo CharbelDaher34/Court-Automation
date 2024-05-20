@@ -123,7 +123,7 @@
       </p>
       <p>
         <label for="endTime">End Time:</label>
-        <input type="time" name="end_time" required="" id="endTime" />
+        <input type="time" name="end_time" required="" id="endTime" /><br>
       </p>
       <button id="reserveButton" onclick="checkAvailability()">Reserve</button>
     </div>
@@ -201,6 +201,10 @@
     function init() {
       document.getElementById('userCreationForm').style.display = 'none'
       document.getElementById('addFaceForm').style.display = 'none'
+
+
+
+
     }
   async   function checkAvailability() {
       var startTime = document.getElementById('startTime').value
@@ -253,18 +257,22 @@
       var email = document.getElementById('email').value
       var password = document.getElementById('password').value
     
+      var availableSlots = {{ available_slots|safe }};
+
+
       var requestData = {
         email: email,
         password: password,
         courtSectionId: courtSectionId,
         startTime: startTime,
         endTime: endTime,
-        date: date
+        date: date,
+        availableSlots:availableSlots
       }
       alert('before')
       try {
         alert("in");
-        response = await fetch('http://localhost:8000/frontend/reserve_court_section/' + courtSectionId + '/', {
+        response = await fetch('http://localhost:8000/frontend/reserve_court_section/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
