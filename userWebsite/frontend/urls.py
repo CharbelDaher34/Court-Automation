@@ -12,7 +12,9 @@ urlpatterns = [
     path('show_reservations/', views.show_reservations, name='show_reservations'),
     path('submit_user_creation_form/', views.submit_user_creation_form, name='submit_user_creation_form'),
     # path('uploadImage/', views.uploadImage, name='uploadImage'),
-    path('write_review/<int:court_section_id>/', views.write_review, name='write_review'),
+    path('getReviews/<int:court_section_id>/', views.getReviews, name='getReviews'),
+    path('writeReview/', views.rating_form, name='writeReview'),
+
 
 ]
 

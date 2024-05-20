@@ -86,6 +86,74 @@
     .btn-primary:hover {
       background-color: #0062cc;
     }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+  }
+  
+  header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+  }
+  
+  header h1 {
+      margin: 0;
+  }
+  
+  main {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .reservation-form {
+      margin-bottom: 20px;
+  }
+  
+  .reservation-form h2,
+  .court-info h2 {
+      margin-top: 0;
+  }
+  
+  .reservation-form label,
+  .court-info p {
+      display: block;
+      margin-bottom: 10px;
+  }
+  
+  .reservation-form input[type="date"],
+  .reservation-form input[type="time"],
+  .reservation-form input[type="text"],
+  .reservation-form input[type="email"],
+  .reservation-form button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+  }
+  
+  .reservation-form button {
+      background-color: #333;
+      color: #fff;
+      cursor: pointer;
+  }
+  
+  footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: #fff;
+  }
+  
   </style>
   <body onload="blockGetRequests()">
     <div class="container">
@@ -123,7 +191,7 @@
             <td>{{ court_section.openTime }}</td>
             <td>{{ court_section.closeTime }}</td>
             <td>
-              <a href="{% url 'write_review' court_section.courtSectionId %}">Write Review</a>
+              <a href="{% url 'getReviews' court_section.courtSectionId %}">Write Review</a>
             </td>
             <td>{{ court_section.courtSectionId }}</td>
           </tr>

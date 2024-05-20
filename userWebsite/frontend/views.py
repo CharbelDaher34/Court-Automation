@@ -159,7 +159,6 @@ def reserve_court_section(request):
             return JsonResponse({"error": "Client not found"}, status=404)
         if password != client.password:
             return JsonResponse({"error": "Incorrect password"}, status=401)
-        token = hash(email + str(password))
 
         # courtSectionId = request.POST.get('court_section_id')
         # available_slots = request.POST.get('available_slots')  # This will be a string representation of the list
@@ -184,8 +183,8 @@ def reserve_court_section(request):
         close_total_minutes = close_hour * 60 + close_minute
         
         is_within_slot = False
-        
-        if start_total_minutes >= open_total_minutes and end_total_minutes <= close_total_minutes:
+
+        if start_total_minutes >= open_total_minutes and end_total_minutes <= close_total_minutes and end_total_minutes>open_total_minutes:
             for slot in availableSlots:
                 start = slot[0]
                 end = slot[1]
@@ -201,19 +200,25 @@ def reserve_court_section(request):
         
         
         
-        
-        
-        reservation = Reservation.objects.create(
-            courtsectionID=courtSection,
-            date=date,
-            startTime=startTime,
-            endTime=endTime,
-            token=token,
-            clientId=client,
-        )
-        reservation.save()
-        context = {}
-        return JsonResponse({"message": "reservation successful"}, status=200)
+        if(is_within_slot):
+            token = hash(email)
+            last_reservation_id = Reservation.objects.latest('reservationID').reservationID
+            token = hash(email+str(last_reservation_id))
+
+            reservation = Reservation.objects.create(
+                courtsectionID=courtSection,
+                date=date,
+                startTime=startTime,
+                endTime=endTime,
+                token=token,
+                clientId=client,
+            )
+            reservation.save()
+            context = {}
+            return JsonResponse({"message": "reservation successful"}, status=200)
+        else:
+            return JsonResponse({"error": "Time not available"}, status=400)
+
 
         return render(
             request, "home.html", context
@@ -319,7 +324,7 @@ def submit_user_creation_form(request):
             return JsonResponse({"message": "Error creating user"}, status=500)
 
 
-def write_review(request, court_section_id):
+def getReviews(request, court_section_id):
     """
     View to handle displaying a review form for a specific court section.
     """
@@ -360,3 +365,30 @@ def write_review(request, court_section_id):
 
     context = {"court_section": court_section}
     return render(request, "write_review.html", context)  # Render review form template
+
+
+
+def rating_form(request):
+    if request.method == 'POST':
+        # Get data from the form
+        comment = request.POST.get('comment')
+        rating = request.POST.get('rating')
+        token = request.POST.get('token')
+        # Get current date
+        import datetime
+        formatted_date = datetime.date.today().strftime('%Y-%m-%d')
+        
+        # Package data in JSON format
+        data = {
+            'comment': comment,
+            'rating': rating,
+            'word': word,
+            'date': formatted_date
+        }
+        
+        # Here you can send the data via an API, save it to the database, or perform any other desired actions
+        
+        # For demonstration purposes, just return the data as JSON
+        return JsonResponse(data)
+    else:
+        return render(request, 'rating_form.html')
