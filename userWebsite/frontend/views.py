@@ -366,6 +366,7 @@ def getReviews(request, court_section_id):
     context = {"court_section": court_section}
     return render(request, "write_review.html", context)  # Render review form template
 
+import datetime
 
 
 def rating_form(request):
@@ -374,21 +375,27 @@ def rating_form(request):
         comment = request.POST.get('comment')
         rating = request.POST.get('rating')
         token = request.POST.get('token')
+        reservation = get_object_or_404(Reservation, token=token)
+
         # Get current date
-        import datetime
-        formatted_date = datetime.date.today().strftime('%Y-%m-%d')
+        formatted_date = datetime.date.today().strftime('%Y:%m:%d')
         
         # Package data in JSON format
-        data = {
-            'comment': comment,
-            'rating': rating,
-            'word': word,
-            'date': formatted_date
-        }
+        
+        # Create a new Review object
+        review = Review.objects.create(
+            reservationId=reservation,
+            rating=rating,
+            comment=comment,
+            created_at=formatted_date
+        )
+    
+    # Save the Review object
+        review.save()
         
         # Here you can send the data via an API, save it to the database, or perform any other desired actions
         
         # For demonstration purposes, just return the data as JSON
-        return JsonResponse(data)
+        return JsonResponse({"data": "Review submitted successfully"})
     else:
         return render(request, 'rating_form.html')
