@@ -5,12 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Court Sections</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-      crossorigin="anonymous"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static 'static/css/styles.css' %}" />
   </head>
   <style>
@@ -21,29 +16,29 @@
       margin: 0;
       padding: 20px;
     }
-
+    
     h1 {
       font-size: 1.5em;
       font-weight: bold;
       margin-bottom: 15px;
     }
-
+    
     /* Table Styles */
     .table {
       width: 100%;
     }
-
+    
     .table th,
     .table td {
       padding: 10px;
       border: 1px solid #ddd;
       text-align: left;
     }
-
+    
     .table thead th {
       background-color: #f8f9fa;
     }
-
+    
     .court-image {
       width: 100px;
       height: 100px;
@@ -51,38 +46,37 @@
       border-radius: 5px;
       margin-right: 10px;
     }
-
+    
     .court-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-
+    
     /* Form Styles */
     #courtSectionForm {
       margin-top: 20px;
       text-align: center;
-
     }
-
+    
     #courtSectionForm label {
       display: block;
       margin-bottom: 5px;
     }
-
+    
     #courtSectionForm input,
     #courtSectionForm button {
       padding: 5px 10px;
       border: 1px solid #ddd;
       border-radius: 5px;
     }
-
+    
     .btn-primary {
       background-color: #007bff;
       color: white;
       border-color: #007bff;
     }
-
+    
     .btn-primary:hover {
       background-color: #0062cc;
     }
@@ -91,71 +85,70 @@
       margin: 0;
       padding: 0;
       background-color: #f0f0f0;
-  }
-  
-  header {
+    }
+    
+    header {
       background-color: #333;
       color: #fff;
       padding: 20px;
       text-align: center;
-  }
-  
-  header h1 {
+    }
+    
+    header h1 {
       margin: 0;
-  }
-  
-  main {
+    }
+    
+    main {
       max-width: 800px;
       margin: 20px auto;
       padding: 20px;
       background-color: #fff;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .reservation-form {
+    }
+    
+    .reservation-form {
       margin-bottom: 20px;
-  }
-  
-  .reservation-form h2,
-  .court-info h2 {
+    }
+    
+    .reservation-form h2,
+    .court-info h2 {
       margin-top: 0;
-  }
-  
-  .reservation-form label,
-  .court-info p {
+    }
+    
+    .reservation-form label,
+    .court-info p {
       display: block;
       margin-bottom: 10px;
-  }
-  
-  .reservation-form input[type="date"],
-  .reservation-form input[type="time"],
-  .reservation-form input[type="text"],
-  .reservation-form input[type="email"],
-  .reservation-form button {
+    }
+    
+    .reservation-form input[type='date'],
+    .reservation-form input[type='time'],
+    .reservation-form input[type='text'],
+    .reservation-form input[type='email'],
+    .reservation-form button {
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
       box-sizing: border-box;
-  }
-  
-  .reservation-form button {
+    }
+    
+    .reservation-form button {
       background-color: #333;
       color: #fff;
       cursor: pointer;
-  }
-  
-  footer {
+    }
+    
+    footer {
       text-align: center;
       padding: 20px;
       background-color: #333;
       color: #fff;
-  }
-  
+    }
   </style>
-  <body onload="blockGetRequests()">
+  <body>
     <div class="container">
       <h1>Court Sections</h1>
 
@@ -175,77 +168,95 @@
         </thead>
         <tbody>
           {% for court_section in courtSections %}
-          <tr>
-            <td>
-              <div class="court-image">
-                <img
-                  src="{% static court_section.image_path %}"
-                  alt="Image for {{ court_section.sectionName }}"
-                  onclick="enlargeImage(this)"
-                />
-              </div>
-            </td>
-            <td>{{ court_section.sectionName }}</td>
-            <td>{{ court_section.sectionType }}</td>
-            <td>{{ court_section.fansCapacity }}</td>
-            <td>{{ court_section.openTime }}</td>
-            <td>{{ court_section.closeTime }}</td>
-            <td>
-              <a href="{% url 'getReviews' court_section.courtSectionId %}">Write Review</a>
-            </td>
-            <td>{{ court_section.courtSectionId }}</td>
-          </tr>
+            <tr>
+              <td>
+                <div class="court-image">
+                  <img src="{% static court_section.image_path %}" alt="Image for {{ court_section.sectionName }}" onclick="enlargeImage(this)" />
+                </div>
+              </td>
+              <td>{{ court_section.sectionName }}</td>
+              <td>{{ court_section.sectionType }}</td>
+              <td>{{ court_section.fansCapacity }}</td>
+              <td>{{ court_section.openTime }}</td>
+              <td>{{ court_section.closeTime }}</td>
+              <td>
+                <a href="{% url 'getReviews' court_section.courtSectionId %}">Write Review</a>
+              </td>
+              <td>{{ court_section.courtSectionId }}</td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-    <form
-      id="courtSectionForm"
-      method="GET"
-      action="{% url 'available_times' %}"
-    >
+
+    <datalist id="courtSectionOptions">
+      {% for court_section in courtSections %}
+        <option value="{{ court_section.courtSectionId }}"></option>
+      {% endfor %}
+    </datalist>
+
+    <form id="courtSectionForm" method="GET" action="{% url 'available_times' %}">
       {% csrf_token %}
       <label for="courtSectionId">Court Section ID:</label>
-      <input type="number" name="courtSectionId" id="courtSectionId" required />
+      <input type="number" name="courtSectionId" id="courtSectionId" list="courtSectionOptions" required />
       <br />
       <label for="date">Select Date:</label>
       <input type="date" name="date" id="date" required />
       <br />
       <button type="submit" class="btn btn-primary">Book Now</button>
     </form>
+    <br /><br /><br />
+    <h1>sdfsdfsdf</h1>
+    <button onclick="tomato()">cdfsgc</button>
 
     <script>
       function enlargeImage(img) {
         // Enlarge the image and center it
-        img.style.width = "60%";
-        img.style.height = "auto";
-        img.style.position = "fixed";
-        img.style.top = "50%";
-        img.style.left = "50%";
-        img.style.transform = "translate(-50%, -50%)";
-        img.style.zIndex = "999"; // Ensure image is on top of other elements
-
+        img.style.width = '60%'
+        img.style.height = 'auto'
+        img.style.position = 'fixed'
+        img.style.top = '50%'
+        img.style.left = '50%'
+        img.style.transform = 'translate(-50%, -50%)'
+        img.style.zIndex = '999' // Ensure image is on top of other elements
+      
         // Blur all content outside the enlarged photo
-        document.body.style.filter = "blur(5px)";
-
+        document.body.style.filter = 'blur(5px)'
+      
         // Add event listener to close the enlarged image
-        img.addEventListener("click", function () {
+        img.addEventListener('click', function () {
           // Restore the image to its original size and position
-          img.style.width = "100px";
-          img.style.height = "100px";
-          img.style.position = "static";
-          img.style.transform = "none";
-          img.style.filter = "none";
-
+          img.style.width = '100px'
+          img.style.height = '100px'
+          img.style.position = 'static'
+          img.style.transform = 'none'
+          img.style.filter = 'none'
+      
           // Remove blur effect
-          document.body.style.filter = "none";
-
+          document.body.style.filter = 'none'
+      
           // Remove the click event listener
-          img.removeEventListener("click", arguments.callee);
-        });
+          img.removeEventListener('click', arguments.callee)
+        })
       }
+      
+      const today = new Date()
+      today.setDate(today.getDate() + 1) // Add 1 day to today
+      const dateInput = document.getElementById('date')
+      dateInput.min = today.toISOString().split('T')[0]
+      
+      
+      const numberInput = document.getElementById('courtSectionId')
+      ids = '{{ ids }}';
+      var allowedValues = JSON.parse(ids);
 
-
+      numberInput.addEventListener('input', function () {
+        const enteredValue = parseInt(this.value) // Get the entered value as an integer
+        if (!ids.includes(enteredValue)) {
+          this.value = '' // Clear the input if the value is not allowed
+        }
+      })
+      
 
     </script>
   </body>

@@ -36,14 +36,17 @@ def home_view(request):
 
 def courtSectionView(request, courtId):
     courtSections = CourtSection.objects.filter(courtId=courtId)
+    ids=[]
     for courtSection in courtSections:
         image_path = f"frontend/courtSectionsImages/{courtSection.courtSectionId}.jpeg"
         courtSection.image_path = (
             image_path  # Add image_path as an attribute to each object
         )
+        ids.append(courtSection.courtSectionId);
 
     context = {
         "courtSections": courtSections,
+        "ids":ids
     }
     return render(request, "court_section.html", context)
 
@@ -70,7 +73,7 @@ def available_times(request):
         return False
 
     court_section = CourtSection.objects.get(courtSectionId=courtSectionId)
-
+    courtId=court_section.courtId
     if not (court_section.openTime and court_section.closeTime):
         return render(request, "home.html", {"context": {}})
 
@@ -105,6 +108,11 @@ def available_times(request):
             if reservations_data[-1][1] < court_section.closeTime
             else None
         )
+        available_slots=[item for item in available_slots if item is not None]
+        if(available_slots==[]):
+            url = reverse("courtSectionView", kwargs={"courtId": courtId.courtId})
+
+            return redirect(url)
 
     available_slots = [
         (
