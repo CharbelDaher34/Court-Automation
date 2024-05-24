@@ -1,13 +1,162 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>All Reviews</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 </head>
+<style>
+    body{
+        background-color: white;
+        margin: 0;
+        padding: 0;
+    }
+    header {
+    text-align: center;
+    background-color: #2da27fdd;
+    color:#fff;
+    padding:5px;
+    box-shadow: rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top:0;
+    width:100%;
+    z-index: 1000;
+  
+
+  }
+  h1{
+   
+    font-family: 'Roboto',sans-serif;
+  }
+  h2{
+    text-align: center;
+    font-family: 'Roboto',sans-serif;
+  }
+  h3{
+    text-align: center;
+    font-weight: normal;
+    font-family: 'Roboto',sans-serif;
+  }
+  table{
+  
+ 
+ width: 60%; 
+ border-collapse: collapse;
+ border-spacing: 0;
+ box-shadow: 0 2px 15px rgba(64,64,64,.7);
+ border-radius: 12px 12px 0 0;
+ overflow: hidden;
+  }
+  td , th{
+ padding: 15px 20px;
+ text-align: center;
+ 
+
+}
+th{
+ background-color: #e26110;
+ color: #fafafa;
+ font-family: 'Open Sans',Sans-serif;
+ font-weight: 200;
+ text-transform: uppercase;
+
+}
+tr{
+ width: 100%;
+ background-color: #fafafa;
+ font-family: 'Montserrat', sans-serif;
+}
+tr:nth-child(even){
+ background-color: #eeeeee;
+}
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Base styles for the form */
+.form-container {
+  background-color: #f7f7f7;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+ font-family: 'Roboto',sans-serif;
+  margin: auto;
+  width: 70%;
+  text-align: center;
+  
+}
+
+/* Style for form elements */
+input[type="text"],
+textarea,
+select {
+  width: 60%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #2da27fdd;
+  border-radius: 4px;
+  align-items: center;
+  font-family: 'Roboto',sans-serif;
+}
+
+/* Style for the submit button */
+input[type="submit"],
+button
+{
+  background-color: #2da27fdd;
+  color: white;
+  padding: 10px 60px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  font-size: 17px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  align-items: center;
+  
+}
+
+input[type="submit"] :hover,button  {
+  background-color: #2da27fdd;
+}
+.button-container{
+    display:flex;
+    justify-content: center;
+}
+.input-container {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        
+    }
+    .input-container input[type="number"] {
+        border-color: #2da27fdd;
+        
+    }
+    input[type='text']{
+        height: fit-content;
+        width: fit-content;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+
+
+</style>
 <body>
-    <h1>All Reviews</h1>
+    <header class="header">
+        
+        <h1>Customers Review</h1>
+        
+      </header>
+      <h2>What our customers think about us</h2>
+    
 
     {% if reviews %}
-        <table>
+        <table class="center">
             <thead>
                 <tr>
                     <th>Reservation ID</th>
@@ -27,23 +176,29 @@
             </tbody>
         </table>
     {% else %}
-        <p>No reviews found.</p>
+        <p><h3>No reviews found.</h3></p>
     {% endif %}
-<br><br>br
-
+<br><br><br><br>
+<p><h2>We Would Really Appreciate A Review</h2></p>
+<p><h3>Did we fully satisfy you? If not please give us the opportunity to put things right before leaving a review.</h3></p>
+<div class="form-container">
 <form id="ratingForm" method="post" action="{% url 'writeReview' %}">
     {% csrf_token %}
+    <div class="input-container">
     <label for="rating">Rating (1 to 5):</label>
     <input type="number" id="rating" name="rating" min="1" max="5" required><br><br>
-    
+    </div>
     <label for="comment">Comment:</label><br>
     <textarea id="comment" name="comment" rows="4" cols="50" required></textarea><br><br>
     
     <label for="token">token:</label>
     <input type="text" id="token" name="token" required><br><br>
-    
+    <div class="button-container">
     <button type="submit">Submit</button>
+    </div>
   </form>
+  </div>
+  <br><br><br><br>
 
 </body>
 </html>

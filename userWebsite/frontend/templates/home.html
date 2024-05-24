@@ -7,92 +7,172 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Basketball Court Reservation</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
   <style>
-  .body {
-    font-family: sans-serif;
+  body {
+    font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
+    background-image: url('{% static "frontend/basketballcourt.avif"%}');
+    
+    background-repeat: no-repeat;
+    background-size:cover;
+    background-position: center;
+    background-attachment: fixed;
+    color:#333;
   }
 
   .container {
-    max-width: 1000px;
-    margin: 0 auto;
+    max-width: 900px;
+    margin: 20px auto;
     padding: 20px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   }
 
   /* Header styles */
   header {
     text-align: center;
+    background-color: #2da27fdd;
+    color:#fff;
+    padding:5px;
+    box-shadow: rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top:0;
+    width:100%;
+    z-index: 1000;
   }
+  .header .logo {
+      width:50px;
+      height: auto;
+      vertical-align: middle;
+    }
 
   h1 {
     font-size: 2em;
-    margin-bottom: 0;
+    margin-bottom: 10px;
+    color: white;
+    font-family:'Roboto',sans-serif;
   }
+  h2{
+    font-size:medium;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }
+  .special-letter {
+    color: orangered;
+}
+
 
   /* Court information styles */
   .court-info {
     margin-bottom: 20px;
+    font-size: 1.1em;
+    color:#34495e
   }
 
   /* Courts section styles */
   .courts {
     display: flex;
     flex-wrap: wrap;
+    gap:20px;
     flex-direction: column; /* Change to column layout */
 
     gap: 20px;
   }
   .court {
-    background-color: #f5f5f5;
+    background-color: #ecf0f1;
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
     width: 100%; /* Set full width for each court */
   }
-
+  .court:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
   .court-name,
   .court-location,
   .court-admin-username,
   .court-admin-number {
-    margin-bottom: 5px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    font-size: 20px;
     font-weight: bold;
+    color:#284a2ee2
   }
 
   .court-action {
     text-align: right;
+    display:flex;
+    justify-content: center;
+    margin-top: 15px;
+    
+
+  }
+  
+  .court-action .btn{
+    background-color: #f2a969;
+    color:#fff;
+    border:none;
+    padding:15px 70px;
+    border-radius: 25px;
+    cursor:pointer;
+    transition: background-color 0.3s ease;
+    text-decoration:none;
+    font-size: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+  }
+  .court-action .btn:hover{
+background-color: #e26110;
   }
 
   /* Footer styles */
   footer {
     text-align: center;
     margin-top: 20px;
+    font-size: 0.9em;
+    color: white
+    
   }
   .court-image {
     text-align: center; /* Center the image within the court div */
     height: 100px;
     width: 100px ;
+    margin-bottom: 15px;
+    
   }
 
   img {
     max-width: 100%; /* Adjust max-width as needed */
+    
   }
+
+  
+
 </style>
 </head>
 <body>
-  <header class="container">
+  <header class="header">
+    <img src="{% static 'frontend/Auto-Court1.png'%}" alt="Court Reservation Logo" class="logo">
     <h1>Court Reservation</h1>
+    <h2><i>Your Court, Your Time: <span class="special-letter">R</span>eserve, <span class="special-letter">P</span>lay, <span class="special-letter">R</span>epeat!</i></h2>
   </header>
 
   <main class="container">
     <section class="court-info">
       <h2>Court Information</h2>
-      <p>Welcome</p>
-      <p>You can see here all the branches we have</p>
+      <p>Welcome to <b><i>JCH Auto-Court </i></b>! Experience the future of court reservations like never before with our automated system. Reserve your spot effortlessly and enjoy the game!</p>
+      <p>Explore our network of branches near you! Discover every corner of our court community and find the perfect spot to play, all at your fingertips.</p>
+      
     </section>
 
     <div class="courts">
       {% for court_data in courtDetails %}
         <div class="court">
+         
           <div class="court-name">Name: {{ court_data.1 }}</div>
           <div class="court-location">Location: {{ court_data.2 }}</div>
           <div class="court-admin-username">Owner: {{ court_data.3 }}</div>
@@ -115,7 +195,7 @@
     </div>
   </main>
 
-  <footer class="container text-center">
+  <footer >
     <p>&copy; 2024 Basketball Court Reservation</p>
   </footer>
 

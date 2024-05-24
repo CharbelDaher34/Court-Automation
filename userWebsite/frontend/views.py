@@ -209,9 +209,8 @@ def reserve_court_section(request):
         
         
         if(is_within_slot):
-            token = hash(email)
             last_reservation_id = Reservation.objects.latest('reservationID').reservationID
-            token = hash(email+str(last_reservation_id))
+            token = str(hash(email+str(last_reservation_id)))[1:]
 
             reservation = Reservation.objects.create(
                 courtsectionID=courtSection,
@@ -221,9 +220,13 @@ def reserve_court_section(request):
                 token=token,
                 clientId=client,
             )
+            duration=end_total_minutes-start_total_minutes
+            price=duration*courtSection.pricePerHour
+            #        {% comment %}  {% endcomment %}
+
             reservation.save()
             context = {}
-            return JsonResponse({"message": "reservation successful"}, status=200)
+            return JsonResponse({"message": "reservation successful","token":token,"price":price}, status=200)
         else:
             return JsonResponse({"error": "Time not available"}, status=400)
 
