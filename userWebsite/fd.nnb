@@ -1,0 +1,42 @@
+{
+    "cells": [
+        {
+            "language": "typescript",
+            "source": [
+                "// Input: None\r\n\r\n// Model\r\nfunction createAndDownloadFile(filename, content) {\r\n    // Create a blob with the file content\r\n    const blob = new Blob([content], { type: 'text/plain' });\r\n  \r\n    // Create a link element\r\n    const link = document.createElement('a');\r\n    link.download = filename;\r\n  \r\n    // Attach the blob to the link\r\n    link.href = window.URL.createObjectURL(blob);\r\n  \r\n    // Append the link to the document body\r\n    document.body.appendChild(link);\r\n  \r\n    // Click the link to trigger the download\r\n    link.click();\r\n  \r\n    // Clean up: remove the link from the document body\r\n    document.body.removeChild(link);\r\n  }\r\n  \r\n  // Output: None\r\n// Example usage\r\nconst filename = 'example.txt';\r\nconst content = 'This is an example text file content.';\r\ncreateAndDownloadFile(filename, content);\r\n  "
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "",
+                                ""
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.error",
+                            "value": {
+                                "name": "ReferenceError",
+                                "message": "document is not defined",
+                                "stack": "    at createAndDownloadFile (<Cell 1> [9, 10])\n    at <Cell 1> [29, 21]\n    at <Cell 1> [15, 46]\n    at Script.runInContext (node:vm:134:12)\n    at Script.runInNewContext (node:vm:139:17)\n    at Object.runInNewContext (node:vm:291:38)\n    at C (c:\\Users\\user\\.cursor\\extensions\\donjayamanne.typescript-notebook-2.0.6\\out\\extension\\server\\index.js:2:113345)\n    at t.execCode (c:\\Users\\user\\.cursor\\extensions\\donjayamanne.typescript-notebook-2.0.6\\out\\extension\\server\\index.js:2:114312)\n    at k.<anonymous> (c:\\Users\\user\\.cursor\\extensions\\donjayamanne.typescript-notebook-2.0.6\\out\\extension\\server\\index.js:2:142156)\n    at k.emit (node:events:514:28)"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                ""
+            ],
+            "outputs": []
+        }
+    ]
+}
