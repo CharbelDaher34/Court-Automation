@@ -209,7 +209,11 @@ def reserve_court_section(request):
         
         
         if(is_within_slot):
-            last_reservation_id = Reservation.objects.latest('reservationID').reservationID
+            try:             
+                last_reservation_id = Reservation.objects.latest('reservationID').reservationID
+            except:
+                last_reservation_id=0
+                
             token = str(hash(email+str(last_reservation_id)))[1:]
 
             reservation = Reservation.objects.create(
@@ -221,7 +225,7 @@ def reserve_court_section(request):
                 clientId=client,
             )
             duration=end_total_minutes-start_total_minutes
-            price=duration*courtSection.pricePerHour
+            price=duration*courtSection.pricePerHour/60
             #        {% comment %}  {% endcomment %}
 
             reservation.save()
@@ -403,6 +407,7 @@ def rating_form(request):
     
     # Save the Review object
         review.save()
+        return redirect("home")
         
         # Here you can send the data via an API, save it to the database, or perform any other desired actions
         

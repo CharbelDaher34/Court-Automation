@@ -358,7 +358,7 @@
         token=data.token;
 price=data.price;
         const link = document.createElement("a");
-        const content = `${startTime}-->${endTime}\n${email}\nToken: ${token}\nPrice: ${price}`;        
+        const content = `${startTime}-->${endTime}\n${email}\nToken: ${token}\nPrice: $${price}\nDate: ${date} `;        
         const file = new Blob([content], { type: 'text/plain' });
         link.href = URL.createObjectURL(file);
         link.download = "reservation.txt";
@@ -451,6 +451,8 @@ price=data.price;
         })
     
         const responseData = await response.json()
+        alert(responseData.message)
+       
     
         // Handle the response data as needed, such as displaying messages to the user
       } catch (error) {

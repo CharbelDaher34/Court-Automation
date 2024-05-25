@@ -159,7 +159,6 @@ input[type="submit"] :hover,button  {
         <table class="center">
             <thead>
                 <tr>
-                    <th>Reservation ID</th>
                     <th>Rating</th>
                     <th>Comment</th>
                     <th>Created At</th>
@@ -168,7 +167,7 @@ input[type="submit"] :hover,button  {
             <tbody>
                 {% for review in reviews %}
                 <tr>
-                    <td>{{ review.reservationId.reservationID }}</td>  <td>{{ review.rating }}</td>
+                    <td>{{ review.rating }}</td>
                     <td>{{ review.comment }}</td>
                     <td>{{ review.created_at }}</td>
                 </tr>
