@@ -45,6 +45,7 @@ namespace Auto_Court
             if (txtItemName.Text == "" || txtUnitPriceHour.Text == "" || txtQuantity.Text == "" || txtTypeChoices.Text == "" )
             {
                 MessageBox.Show("Missing Information");
+                return;
             }
             else
             {
@@ -108,7 +109,7 @@ namespace Auto_Court
                     row.Cells["typeChoices"].Value != null )
                     {
 
-                        // Get the client ID
+                        // Get the inventory ID
                         int inventoryId = Convert.ToInt32(row.Cells["inventoryId"].Value);
 
                         // Get the updated values
@@ -149,7 +150,7 @@ namespace Auto_Court
                     MessageBox.Show("Inventory information updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 modifiedRows.Clear();
-                // Refresh the DataGridView after updating
+                // Refresh the inventory's DataGridView after updating
                 LoadInventoryData();
             }
             catch (Exception ex)

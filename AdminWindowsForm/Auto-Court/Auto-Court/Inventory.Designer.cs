@@ -81,11 +81,11 @@ namespace Auto_Court
             this.lblunitPriceHour.BackColor = System.Drawing.Color.Transparent;
             this.lblunitPriceHour.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lblunitPriceHour.ForeColor = System.Drawing.Color.DarkSlateGray;
-            this.lblunitPriceHour.Location = new System.Drawing.Point(208, 379);
+            this.lblunitPriceHour.Location = new System.Drawing.Point(187, 379);
             this.lblunitPriceHour.Name = "lblunitPriceHour";
-            this.lblunitPriceHour.Size = new System.Drawing.Size(154, 23);
+            this.lblunitPriceHour.Size = new System.Drawing.Size(187, 23);
             this.lblunitPriceHour.TabIndex = 2;
-            this.lblunitPriceHour.Text = "Unit Price/Hour";
+            this.lblunitPriceHour.Text = "Unit Price($) /Hour";
             // 
             // lblquantity
             // 

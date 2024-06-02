@@ -88,17 +88,21 @@ namespace Auto_Court
         private void btnFilter_Click(object sender, EventArgs e)
         {
             string clientFilter = comboBoxClient.SelectedItem?.ToString();
-            MessageBox.Show(clientFilter);
+            //MessageBox.Show(clientFilter);
             string dateFilter = comboBoxDate.SelectedItem?.ToString();
-            MessageBox.Show(dateFilter);
+            //MessageBox.Show(dateFilter);
             string timeFilter = comboBoxTime.SelectedItem?.ToString();
-            MessageBox.Show(timeFilter);
+            //MessageBox.Show(timeFilter);
             string priceFilter = comboBoxPrice.SelectedItem?.ToString();
-            MessageBox.Show(priceFilter);
+            //MessageBox.Show(priceFilter);
 
             StringBuilder queryBuilder = new StringBuilder("SELECT * FROM backend_reservation r JOIN backend_client c ON r.clientId_id=c.clientId " +
                 "JOIN backend_courtsection cs ON cs.courtsectionID=r.courtSectionId_id WHERE 1=1 ");
-
+            if (string.IsNullOrEmpty(clientFilter) && string.IsNullOrEmpty(dateFilter) && string.IsNullOrEmpty(timeFilter) && string.IsNullOrEmpty(priceFilter))
+            {
+                MessageBox.Show("Select at least one filter");
+                return;
+            }
             if(!string.IsNullOrEmpty(clientFilter))
             {
                 queryBuilder.Append($"AND CONCAT(c.firstName,' ',c.lastName)='{clientFilter}'");
@@ -120,7 +124,7 @@ namespace Auto_Court
             }
 
             string query = queryBuilder.ToString();
-            MessageBox.Show(query);
+            //MessageBox.Show(query);
             DataTable filteredData = DBManager.ExecuteQueryWithParameters(query);
 
             dgvReservation.DataSource = filteredData;

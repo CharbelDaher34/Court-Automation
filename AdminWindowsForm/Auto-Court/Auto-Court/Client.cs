@@ -56,6 +56,7 @@ namespace Auto_Court
             if (txtFirstName.Text == "" || txtLastName.Text == "" || txtPhoneNumber.Text == "" || txtEmail.Text == "" || txtPassword.Text == "" || txtCountry.Text == "" || txtAddress.Text == "")
             {
                 MessageBox.Show("Missing Information");
+                return;
             }
             else
             {
@@ -63,12 +64,7 @@ namespace Auto_Court
                 try
                 {
                     DateTime dateOfBirth = dtpDateOfBirth.Value;
-                    //DateTime dateOfBirth;
-                    //if(!DateTime.TryParse(txtDateOfBirth.Text, out dateOfBirth))
-                    //{
-                    //    MessageBox.Show("Invalid Date of Birth", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                    //}
+                   
                     string query_addClient = "INSERT INTO backend_client (password, firstName, lastName, email, number, address, country, date_of_birth, sex)" +
                         "VALUES(@Password,@FirstName,@LastName,@Email,@Number,@Address,@Country,@Date_of_birth,@Sex)";
                     MySqlParameter[] parameters =
@@ -116,6 +112,7 @@ namespace Auto_Court
             txtPhoneNumber.Text = "";
             rdbFemale.Checked = false;
             rdbMale.Checked = false;
+            dtpDateOfBirth.ResetText();
         }
 
         private void btnReset_Click(object sender, EventArgs e)

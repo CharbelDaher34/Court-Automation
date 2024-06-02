@@ -427,9 +427,9 @@ namespace Auto_Court
             this.lblUnitPrice.ForeColor = System.Drawing.Color.DarkSlateGray;
             this.lblUnitPrice.Location = new System.Drawing.Point(432, 479);
             this.lblUnitPrice.Name = "lblUnitPrice";
-            this.lblUnitPrice.Size = new System.Drawing.Size(100, 23);
+            this.lblUnitPrice.Size = new System.Drawing.Size(133, 23);
             this.lblUnitPrice.TabIndex = 27;
-            this.lblUnitPrice.Text = "Unit Price";
+            this.lblUnitPrice.Text = "Unit Price ($)";
             // 
             // lblQuantity
             // 

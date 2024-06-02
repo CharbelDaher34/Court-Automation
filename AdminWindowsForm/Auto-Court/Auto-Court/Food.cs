@@ -38,7 +38,7 @@ namespace Auto_Court
                 DataTable courtsectionTable = DBManager.ExecuteQueryWithParameters(query_displayCourtSection);
 
                 comboBoxCourtSectionId.Items.Clear();
-
+                comboBoxCourtSectionId.Items.Add("");
 
                 foreach (DataRow row in courtsectionTable.Rows)
                 {
@@ -78,7 +78,7 @@ namespace Auto_Court
             {
 
                 int courtSectionId = selectedCourtSection.Id;
-                MessageBox.Show("CourtSection " + courtSectionId);
+                //MessageBox.Show("CourtSection " + courtSectionId);
                 string query_addVendingMachine= "INSERT INTO backend_vendingmachine (courtSectionId_id) " +
                     "VALUES (@CourtSectionId_id)";
                 MySqlParameter[] parameters =
@@ -118,13 +118,12 @@ namespace Auto_Court
                 foreach (int rowIndex in modifiedRowsVM)
                 {
                     DataGridViewRow rowVM = dgvVendingMachine.Rows[rowIndex];
-                    // Check if the row has been edited
-
+                    
                     // Check if the row is dirty (i.e., has been edited)
                     if (!rowVM.IsNewRow && rowVM.Cells["courtSectionId_id"].Value != null)
                     {
 
-                        // Get the courtSection ID
+                        // Get the vendingMachine ID
                         int vendingMachineId = Convert.ToInt32(rowVM.Cells["vendingMachineId"].Value);
 
                         // Get the updated values
@@ -162,8 +161,9 @@ namespace Auto_Court
 
                 }
                 modifiedRowsVM.Clear();
-                // Refresh the DataGridView after updating
+                // Refresh the vendingMachine's DataGridView after updating
                 LoadVendingMachineData();
+                LoadFoodData();
 
             }
             catch (Exception ex)
@@ -196,6 +196,7 @@ namespace Auto_Court
                         {
                             MessageBox.Show("Vending machine deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             LoadVendingMachineData();
+                            LoadFoodData();
 
                         }
                         else
@@ -254,7 +255,7 @@ namespace Auto_Court
             if (txtDealerName.Text == "" || txtAddress.Text == "" || txtContactInfo.Text==""||txtMarginOfProfit.Text=="")
             {
                 MessageBox.Show("Missing Information");
-
+                return;
             }
 
 
@@ -301,14 +302,13 @@ namespace Auto_Court
                 foreach (int rowIndex in modifiedRowsD)
                 {
                     DataGridViewRow rowD = dgvDealer.Rows[rowIndex];
-                    // Check if the row has been edited
-
+                    
                     // Check if the row is dirty (i.e., has been edited)
                     if (!rowD.IsNewRow && rowD.Cells["name"].Value != null && rowD.Cells["address"].Value != null &&
                     rowD.Cells["contact_info"].Value != null && rowD.Cells["marginOfProfit"].Value!=null)
                     {
 
-                        // Get the courtSection ID
+                        // Get the dealer ID
                         int dealerId = Convert.ToInt32(rowD.Cells["dealer_id"].Value);
 
                         // Get the updated values
@@ -353,8 +353,9 @@ namespace Auto_Court
 
                 }
                 modifiedRowsD.Clear();
-                // Refresh the DataGridView after updating
+                // Refresh the dealer's DataGridView after updating
                 LoadDealerData();
+                LoadFoodData();
 
             }
             catch (Exception ex)
@@ -387,6 +388,7 @@ namespace Auto_Court
                         {
                             MessageBox.Show("Dealer deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             LoadDealerData();
+                            LoadFoodData();
 
                         }
                         else
@@ -431,6 +433,7 @@ namespace Auto_Court
                 DataTable vendingMachineTable = DBManager.ExecuteQueryWithParameters(query_displayVendingMachine);
 
                 comboBoxVendingMachineId.Items.Clear();
+                comboBoxVendingMachineId.Items.Add("");
 
 
                 foreach (DataRow row in vendingMachineTable.Rows)
@@ -445,6 +448,7 @@ namespace Auto_Court
                 DataTable dealerTable = DBManager.ExecuteQueryWithParameters(query_displayDealer);
 
                 comboBoxDealerId.Items.Clear();
+                comboBoxDealerId.Items.Add("");
 
 
                 foreach (DataRow row in dealerTable.Rows)
@@ -489,7 +493,7 @@ namespace Auto_Court
             if (txtFoodName.Text== "" || txtDescription.Text == "" || txtUnitPrice.Text==""||txtQuantity.Text==""||txtMaxQuantity.Text=="")
             {
                 MessageBox.Show("Missing Information");
-
+                return;
             }
 
             try
@@ -497,8 +501,8 @@ namespace Auto_Court
 
                 int dealerId = selectedDealer.Id;
                 int vendingMachineId = selectedVendingMachine.Id;
-                MessageBox.Show("Dealer " + dealerId);
-                MessageBox.Show("Vending machine " + vendingMachineId);
+                //MessageBox.Show("Dealer " + dealerId);
+                //MessageBox.Show("Vending machine " + vendingMachineId);
                 string query_addFood = "INSERT INTO backend_food (name, description, unitPrice, quantity, Maxquantity, dealer_id_id, vendingMachineId_id) " +
                     "VALUES (@Name, @Description, @UnitPrice, @Quantity, @Maxquantity, @Dealer_id_id, @VendingMachineId_id)";
                 MySqlParameter[] parameters =
@@ -544,15 +548,14 @@ namespace Auto_Court
                 foreach (int rowIndex in modifiedRowsF)
                 {
                     DataGridViewRow rowF = dgvFood.Rows[rowIndex];
-                    // Check if the row has been edited
-
+                    
                     // Check if the row is dirty (i.e., has been edited)
                     if (!rowF.IsNewRow && rowF.Cells["name"].Value != null && rowF.Cells["description"].Value != null &&
                     rowF.Cells["unitPrice"].Value != null && rowF.Cells["quantity"].Value!=null && rowF.Cells["Maxquantity"].Value!=null 
                     && rowF.Cells["dealer_id_id"].Value!=null && rowF.Cells["vendingMachineId_id"].Value!=null)
                     {
 
-                        // Get the courtSection ID
+                        // Get the food ID
                         int foodId = Convert.ToInt32(rowF.Cells["foodId"].Value);
 
                         // Get the updated values
@@ -603,7 +606,7 @@ namespace Auto_Court
 
                 }
                 modifiedRowsF.Clear();
-                // Refresh the DataGridView after updating
+                // Refresh the food's DataGridView after updating
                 LoadFoodData();
 
             }

@@ -33,6 +33,7 @@ namespace Auto_Court
                 DataTable adminsTable = DBManager.ExecuteQueryWithParameters(query_displayAdmins);
 
                 comboBoxAdmin.Items.Clear();
+                comboBoxAdmin.Items.Add("");
 
                 foreach (DataRow row in adminsTable.Rows)
                 {
@@ -74,6 +75,7 @@ namespace Auto_Court
                 DataTable courtsTable = DBManager.ExecuteQueryWithParameters(query_displayCourts);
 
                 comboBoxCourtId.Items.Clear();
+                comboBoxCourtId.Items.Add("");
 
                 foreach (DataRow row in courtsTable.Rows)
                 {
@@ -95,6 +97,7 @@ namespace Auto_Court
             if (txtName.Text == "" || txtLocation.Text == "" || comboBoxAdmin.SelectedItem == null)
             {
                 MessageBox.Show("Missing Information");
+                return;
 
             }
             AdminItem selectedAdmin = comboBoxAdmin.SelectedItem as AdminItem;
@@ -109,7 +112,7 @@ namespace Auto_Court
                 {
 
                     int adminId = selectedAdmin.Id;
-                    MessageBox.Show("ADMIN " + adminId);
+                    //MessageBox.Show("ADMIN " + adminId);
                     string query_addCourt = "INSERT INTO backend_court(name, location, adminId_id)" +
                         "VALUES(@Name,@Location,@AdminId_id)";
                     MySqlParameter[] parameters =
@@ -125,6 +128,7 @@ namespace Auto_Court
                         MessageBox.Show("Court added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ResetCourtInput();
                         LoadCourtData();
+                        LoadCourtSectionData();
                     }
                     else
                     {
@@ -142,15 +146,14 @@ namespace Auto_Court
         
         private void ResetCourtInput()
         {
-            txtName.Text = "";
+            txtName.Clear();
+            //txtName.Text = "";
             txtLocation.Text = "";
             comboBoxAdmin.SelectedIndex = -1;
          
         }
         private void ResetCourtSectionInput()
         {
-            txtName.Clear();
-            txtLocation.Clear();
             txtPrice.Clear();
             comboBoxCourtId.SelectedIndex = -1;
             txtSectionName.Clear();
@@ -167,6 +170,7 @@ namespace Auto_Court
             if (txtSectionName.Text == "" || txtSectionType.Text == ""||txtFansCapacity.Text==""||txtPrice.Text==""||comboBoxCourtId.SelectedItem==null)
             {
                 MessageBox.Show("Missing Information");
+                return;
             }
             CourtItem selectedCourt = comboBoxCourtId.SelectedItem as CourtItem;
             if (selectedCourt == null)
@@ -180,7 +184,7 @@ namespace Auto_Court
                 {
 
                     int courtId = selectedCourt.Id;
-                    MessageBox.Show("court " + courtId);
+                    //MessageBox.Show("court " + courtId);
                     TimeSpan selectedOpenTime = dtPOpenTime.Value.TimeOfDay;
                     TimeSpan selectedCloseTime = dtPCloseTime.Value.TimeOfDay;
                     string query_addCourtSection = "INSERT INTO backend_courtsection(sectionName, sectionType, fansCapacity, courtId_id,closeTime,openTime,pricePerHour)" +
@@ -202,6 +206,7 @@ namespace Auto_Court
                         MessageBox.Show("Court section added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ResetCourtSectionInput();
                         LoadCourtSectionData();
+                        LoadCourtData();
                     }
                     else
                     {
@@ -213,7 +218,7 @@ namespace Auto_Court
                 }
                 catch (Exception Ex)
                 {
-                    MessageBox.Show("Error adding court: " + Ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Error adding court section: " + Ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             
             
@@ -248,6 +253,7 @@ namespace Auto_Court
                         {
                             MessageBox.Show("Court section deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             LoadCourtSectionData();
+                            LoadCourtData();
 
                         }
                         else
@@ -347,6 +353,7 @@ namespace Auto_Court
                 modifiedRowsCS.Clear();
                     // Refresh the DataGridView after updating
                     LoadCourtSectionData();
+                    LoadCourtData();
                 
             }
             catch (Exception ex)
@@ -365,14 +372,13 @@ namespace Auto_Court
                 foreach (int rowIndex in modifiedRowsC)
                 {
                     DataGridViewRow rowC = dgvCourt.Rows[rowIndex];
-                    // Check if the row has been edited
-
+                  
                     // Check if the row is dirty (i.e., has been edited)
                     if (!rowC.IsNewRow && rowC.Cells["name"].Value != null && rowC.Cells["location"].Value != null &&
                     rowC.Cells["adminId_id"].Value != null )
                     {
 
-                        // Get the courtSection ID
+                        // Get the court ID
                         int courtId = Convert.ToInt32(rowC.Cells["courtId"].Value);
 
                         // Get the updated values
@@ -417,8 +423,9 @@ namespace Auto_Court
 
                 }
                 modifiedRowsC.Clear();
-                // Refresh the DataGridView after updating
+                // Refresh the Court's DataGridView after updating
                 LoadCourtData();
+                LoadCourtSectionData();
 
             }
             catch (Exception ex)
@@ -451,6 +458,7 @@ namespace Auto_Court
                         {
                             MessageBox.Show("Court deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             LoadCourtData();
+                            LoadCourtSectionData();
 
                         }
                         else
