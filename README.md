@@ -40,11 +40,6 @@ Our project aims to revolutionize the management and access of sports courts by 
 4. **Analysis**:
    - Analytical tools and dashboards visualize and interpret data collected from the system, helping in understanding user behavior and optimizing court usage.
 
-5. **Electronics Technology**:
-   - Utilizes Arduino for automating court management tasks such as door access, ventilation, lighting, and fire detection, enhancing the overall user experience.
-
-6. **Implementation and Testing**:
-   - Detailed flowcharts and circuit diagrams illustrate the workflow and hardware setup, with thorough testing procedures to validate the system's functionality.
 
 ### Conclusion
 
