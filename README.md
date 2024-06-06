@@ -25,7 +25,11 @@ Efficient management and smooth operations are crucial in sports courts and simi
 
 ### My Contributions
 
-I developed the **website using Django** (located in the [userWebsite folder](./userWebsite)) and implemented the **computer vision** system using Facenet and YOLO, including the API for accessing the models for creating embeddings and face verification.
+- Developed the **website using Django** (located in the [userWebsite folder](./userWebsite)).
+- Implemented the **computer vision** system using Facenet and YOLO.
+- Created the **API for accessing the computer vision models**, located in the [arduinoBackend folder](./arduinoBackend).
+- Designed the **database** for managing client, court, and reservation data.
+
 
 ### Conclusion
 
