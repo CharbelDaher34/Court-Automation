@@ -1,0 +1,26 @@
+<annotation>
+	<folder>photosforai</folder>
+	<filename>IMG_20191204_162148_cropped.jpg</filename>
+	<path>C:\Users\user\Desktop\photosforai\IMG_20191204_162148_cropped.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1300</width>
+		<height>1800</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>face</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>20</xmin>
+			<ymin>19</ymin>
+			<xmax>1267</xmax>
+			<ymax>1758</ymax>
+		</bndbox>
+	</object>
+</annotation>

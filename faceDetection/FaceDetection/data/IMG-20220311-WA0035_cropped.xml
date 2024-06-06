@@ -1,0 +1,26 @@
+<annotation>
+	<folder>photosforai</folder>
+	<filename>IMG-20220311-WA0035_cropped.jpg</filename>
+	<path>C:\Users\user\Desktop\photosforai\IMG-20220311-WA0035_cropped.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>221</width>
+		<height>277</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>face</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>5</xmin>
+			<ymin>2</ymin>
+			<xmax>221</xmax>
+			<ymax>264</ymax>
+		</bndbox>
+	</object>
+</annotation>

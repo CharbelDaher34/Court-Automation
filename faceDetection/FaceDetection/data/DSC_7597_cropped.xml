@@ -1,0 +1,26 @@
+<annotation>
+	<folder>photosforai</folder>
+	<filename>DSC_7597_cropped.jpg</filename>
+	<path>C:\Users\user\Desktop\photosforai\DSC_7597_cropped.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>831</width>
+		<height>1046</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>face</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>11</xmin>
+			<ymin>5</ymin>
+			<xmax>826</xmax>
+			<ymax>1037</ymax>
+		</bndbox>
+	</object>
+</annotation>

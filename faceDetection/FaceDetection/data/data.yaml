@@ -1,0 +1,6 @@
+train: ../FACE-1/train/images
+val: ../FACE-1/valid/images
+test: ../FACE-1/test/images
+
+nc: 1
+names: ['face']

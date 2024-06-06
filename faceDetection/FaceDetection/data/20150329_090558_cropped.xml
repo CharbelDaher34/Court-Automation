@@ -1,0 +1,26 @@
+<annotation>
+	<folder>photosforai</folder>
+	<filename>20150329_090558_cropped.jpg</filename>
+	<path>C:\Users\user\Desktop\photosforai\20150329_090558_cropped.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>704</width>
+		<height>950</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>face</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>14</xmin>
+			<ymin>4</ymin>
+			<xmax>692</xmax>
+			<ymax>938</ymax>
+		</bndbox>
+	</object>
+</annotation>
